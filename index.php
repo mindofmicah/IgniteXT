@@ -19,5 +19,4 @@ session_start();
 foreach (glob(APPDIR . 'system/*.php') as $filename) include $filename;
 foreach (glob(APPDIR . 'config/*.php') as $filename) include $filename;
 
-$router = new Router;
-$router->route();
+Router::route();
