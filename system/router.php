@@ -23,7 +23,7 @@ class Router {
 	public static $controller_class;
 	public static $controller_method;
 
-	function route()
+	public static function route()
 	{
 		self::get_route_from_request();
 		self::check_manually_defined_routes();
@@ -31,7 +31,18 @@ class Router {
 		self::load_controller_and_call_method();
 	}
 	
-	function get_route_from_request()
+	/**
+	 * Adds a route/controller pair to the $manual_routes array.
+	 * 
+	 * @param string $route
+	 * @param string $controller 
+	 */
+	public static function add_manual_route($route, $controller)
+	{
+		self::$manual_routes[] = array('route' => $route, 'controller' => $controller);
+	}
+	
+	private function get_route_from_request()
 	{
 		self::$route = isset($_GET['r']) ? $_GET['r'] : '';
 		self::$route = trim(self::$route, '/');
@@ -41,14 +52,14 @@ class Router {
 	 * Checks to see if a route was explicity defined.  Normally this is
 	 * done by a configuration file setting the Router::$manual_routes array.
 	 */
-	function check_manually_defined_routes()
+	private function check_manually_defined_routes()
 	{
-		foreach (self::$manual_routes as $route=>$controller)
+		foreach (self::$manual_routes as $manual_route)
 		{
-			if (self::$route == $route)
+			if (substr(self::$route, 0, strlen($manual_route['route'])) == $manual_route['route'])
 			{
 				//Appends the extra stuff from self::$route onto $controller
-				self::$route = $controller . substr($this->route,strlen($route));
+				self::$route = $manual_route['controller'] . substr(self::$route,strlen($manual_route['route']));
 				return;
 			}
 		}
@@ -59,7 +70,7 @@ class Router {
 	 * controller and call the method.  It may also set GET variables if any were
 	 * included in the URL.
 	 */
-	function parse_route_string()
+	private function parse_route_string()
 	{
 		if (self::$route == '') $route_parts = array();
 		else $route_parts = explode('/', self::$route);
@@ -113,7 +124,7 @@ class Router {
 	 * 
 	 * @param array $route_parts
 	 */
-	function set_get_variables($route_parts)
+	private function set_get_variables($route_parts)
 	{
 		if (count($route_parts) > 0)
 		{
@@ -133,7 +144,7 @@ class Router {
 	 * Sets the self::$controller_ variables so that the
 	 * load_controller_and_call_method function will show the 404 page.
 	 */
-	function set_404_request()
+	private function set_404_request()
 	{
 		//If we're looking for the 404 controller here, it means we didn't find it 
 		//the first time, so just echo a message and give up.
@@ -155,7 +166,7 @@ class Router {
 	 * Creates an instance of the requested controller and calls the requested
 	 * method in that controller.
 	 */
-	function load_controller_and_call_method()
+	private function load_controller_and_call_method()
 	{
 		if (!file_exists(self::$controller_path . self::$controller_file)) 
 		{
