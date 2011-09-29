@@ -3,6 +3,7 @@
  * The router uses a request variable to figure out which controller to load
  * and method to call.  It also creates GET variables using the extra non-route 
  * information like so:
+ * 
  * http://www.example.com/admin/users/view/id/1000
  *   $route = "/admin/users/view/id/1000"
  *   $controller_path = "[APPDIR]controllers/admin/"
@@ -60,14 +61,14 @@ class Router {
 	 */
 	function parse_route_string()
 	{
-    if (self::$route == '') $route_parts = array();
-    else $route_parts = explode('/', self::$route);
+		if (self::$route == '') $route_parts = array();
+		else $route_parts = explode('/', self::$route);
 		
-    self::$controller_path = APPDIR . 'controllers/';
-    self::$controller_namespace = '\\Controllers\\';
+		self::$controller_path = APPDIR . 'controllers/';
+		self::$controller_namespace = '\\Controllers\\';
 		
 		//Find the controller file
-    if (count($route_parts) != 0)
+		if (count($route_parts) != 0)
 		{
 			self::$controller_file = array_shift($route_parts);
 			while (!file_exists(self::$controller_path . self::$controller_file . '.php'))
@@ -89,22 +90,22 @@ class Router {
 		else //The route is empty, use the 'Main' controller
 		{
 			self::$controller_file = 'main';
-		}     
-    
-    self::$controller_class = ucfirst(self::$controller_file);
+		}
+
+		self::$controller_class = ucfirst(self::$controller_file);
 		self::$controller_file .= '.php';
 
-    //If the number of route_parts is odd, then it contains a method
-    //otherwise it only contains variables, so show the index method
-    if (count($route_parts) > 0 && count($route_parts) % 2 == 1)
-      self::$controller_method = array_shift($route_parts);
-    else
-      self::$controller_method = 'index';
+		//If the number of route_parts is odd, then it contains a method
+		//otherwise it only contains variables, so show the index method
+		if (count($route_parts) > 0 && count($route_parts) % 2 == 1)
+			self::$controller_method = array_shift($route_parts);
+		else
+			self::$controller_method = 'index';
 		
 		//Any leftover route parts become GET variables
-    self::set_get_variables($route_parts);
+		self::set_get_variables($route_parts);
 
-    self::load_controller_and_call_method();
+		self::load_controller_and_call_method();
 	}
 	
 	/**
@@ -115,17 +116,17 @@ class Router {
 	function set_get_variables($route_parts)
 	{
 		if (count($route_parts) > 0)
-    {
-      //If route parts is odd, pop off the last value because its supposed to be even
-      if (count($route_parts) % 2 == 1) array_pop($route_parts);
+		{
+			//If route parts is odd, pop off the last value because its supposed to be even
+			if (count($route_parts) % 2 == 1) array_pop($route_parts);
 
-      while (count($route_parts) > 0)
-      {
-        $key = array_shift($route_parts);
-        $value = array_shift($route_parts);
-        if (!isset($_GET[$key])) $_GET[$key]=$value;
-      }
-    }
+			while (count($route_parts) > 0)
+			{
+				$key = array_shift($route_parts);
+				$value = array_shift($route_parts);
+				if (!isset($_GET[$key])) $_GET[$key]=$value;
+			}
+		}
 	}
 	
 	/**
@@ -133,7 +134,7 @@ class Router {
 	 * load_controller_and_call_method function will show the 404 page.
 	 */
 	function set_404_request()
-  {
+	{
 		//If we're looking for the 404 controller here, it means we didn't find it 
 		//the first time, so just echo a message and give up.
 		if (self::$controller_path == APPDIR . 'controllers/' && self::$controller_file == '404.php')
@@ -148,7 +149,7 @@ class Router {
 		self::$controller_file = '404.php';
 		self::$controller_method = 'index';
 		self::$controller_class = '_404';
-  }
+	}
 	
 	/**
 	 * Creates an instance of the requested controller and calls the requested
@@ -165,16 +166,16 @@ class Router {
 		
 		include(self::$controller_path . self::$controller_file);
 		
-    $class = self::$controller_namespace . self::$controller_class;
-    $controller = new $class;
+		$class = self::$controller_namespace . self::$controller_class;
+		$controller = new $class;
 
-    if (method_exists($controller, self::$controller_method))
-      $controller->{self::$controller_method}();
-    elseif (method_exists($controller, 'm_' . self::$controller_method))
-      $controller->{'m_' . self::$controller_method}();
-    else
+		if (method_exists($controller, self::$controller_method))
+			$controller->{self::$controller_method}();
+		elseif (method_exists($controller, 'm_' . self::$controller_method))
+			$controller->{'m_' . self::$controller_method}();
+		else
 		{
-      self::set_404_request();
+			self::set_404_request();
 			self::load_controller_and_call_method();
 		}
 	}
