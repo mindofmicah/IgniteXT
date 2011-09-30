@@ -1,11 +1,27 @@
 <?
-ini_set('display_errors',1); 
-error_reporting(E_ERROR);
+/*==============================================================================*
+ *  ,--,                                   ,--,                                 *
+ *  |  |                                   |  |            ,--,  ,------------, *
+ *  |  |                          ,--, ,---'  '---,        |  |  |  ,--,  ,---' *
+ *  |  |                          '__' '---,  ,---'         \  \/  /   |  |     *
+ *  |  |    ,-----,   ,------,    ,--,     |  |   ,------,   \    /    |  |     *
+ *  |  |   /  _   |  |  ,--,  |   |  |     |  |  |   ==  |   /    \    |  |     *
+ *  |  |  |  / \  |  |  |  |  |   |  |     |  |  |  ,----'  /  /\  \   |  |     *
+ *  |  |  |  \_/  |  |  |  |  |   |  |     |  |  |  '---', |  |  |  |  |  |     *
+ * '----'  \      | '----''----' '----'   '----'  '-----,' '--'  '--' '----'    *
+ *          '--|  |                                                             *
+ *     ,'------'  '     P H P   F R A M E W O R K                               *
+ *     ',---------'                                                             *
+ *==============================================================================*/
 
 define('BASEURL','/');
 define('BASEDIR',dirname(__FILE__).'/');
 define('APPDIR',dirname(__FILE__).'/application/');
 define('SYSDIR',dirname(__FILE__).'/system/');
+
+//Sets some PHP configuration options at runtime. Comment this line out if you 
+//want to use the settings from your server's php.ini file.
+include(BASEDIR . 'php_settings.php');
 
 require(SYSDIR . 'router.php');
 require(SYSDIR . 'controller.php');
