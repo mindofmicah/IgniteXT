@@ -5,12 +5,13 @@
  * information like so:
  * 
  * http://www.example.com/admin/users/view/id/1000
- *   $route = "/admin/users/view/id/1000"
- *   $controller_path = "[APPDIR]controllers/admin/"
- *   $controller_file = "users.php"
- *   $controller_namespace = "\Controllers\admin"
- *   $controller_class = "Users"
- *   $controller_method = "view"
+ *   \Router::$route = "/admin/users/view/id/1000"
+ *   \Router::$controller_path = "[APPDIR]controllers/admin/"
+ *   \Router::$controller_file = "users.php"
+ *   \Router::$controller_namespace = "\Controllers\admin"
+ *   \Router::$controller_class = "Users"
+ *   \Router::$controller_method = "view"
+ *   $_GET['id'] = 1000
  */
 class Router {
 
