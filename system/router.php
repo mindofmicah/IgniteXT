@@ -115,8 +115,6 @@ class Router {
 		
 		//Any leftover route parts become GET variables
 		self::set_get_variables($route_parts);
-
-		self::load_controller_and_call_method();
 	}
 	
 	/**
@@ -168,6 +166,7 @@ class Router {
 	 */
 	private function load_controller_and_call_method()
 	{
+		echo "lcacm";
 		if (!file_exists(self::$controller_path . self::$controller_file)) 
 		{
 			self::set_404_request();
@@ -175,7 +174,7 @@ class Router {
 			return;
 		}
 		
-		include(self::$controller_path . self::$controller_file);
+		include self::$controller_path . self::$controller_file;
 		
 		$class = self::$controller_namespace . self::$controller_class;
 		$controller = new $class;
