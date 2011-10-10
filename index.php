@@ -27,7 +27,10 @@ define('IXTDIR',dirname(__FILE__).'/ignitext/');
 //only want to use the settings from your server's php.ini file.
 include BASEDIR . 'php_settings.php';
 
-require IXTDIR . 'system/autoload.php';
+if (file_exists(APPDIR . 'system/autoload.php')) include APPDIR . 'system/autoload.php';
+elseif (file_exists(SHRDIR . 'system/autoload.php')) include SHRDIR . 'system/autoload.php';
+elseif (file_exists(IXTDIR . 'system/autoload.php')) include IXTDIR . 'system/autoload.php';
+else throw new Exception('Autoloader not found.');
 
 session_cache_limiter('public');
 session_start();
