@@ -2,6 +2,7 @@
 /**
  * This class contains functions to display views and templates.  Primarily used by a controller class.
  */
+namespace System;
 class Display
 {
 	function load_view($file,$data=null)

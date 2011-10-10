@@ -1,4 +1,5 @@
 <?php
+namespace System;
 class Controller {
 
   public $data = array();

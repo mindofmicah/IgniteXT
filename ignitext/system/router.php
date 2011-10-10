@@ -13,6 +13,7 @@
  *   \Router::$controller_method = "view"
  *   $_GET['id'] = 1000
  */
+namespace System;
 class Router {
 
 	private static $route;
@@ -167,7 +168,6 @@ class Router {
 	 */
 	private function load_controller_and_call_method()
 	{
-		echo "lcacm";
 		if (!file_exists(self::$controller_path . self::$controller_file)) 
 		{
 			self::set_404_request();
