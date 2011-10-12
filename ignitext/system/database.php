@@ -1,11 +1,37 @@
 <?php
 /**
- * Database Helper Functions
+ * Database Manager
  * 
- * This class is used to make getting results from queries just a little bit easier.
+ * Manages connections and runs queries.  This class servers as a wrapper for PDO.
  */
 class DB
 {
+	static $PDO_connections = array();
+	static $selected_db = '';
+	
+	public static function connect_db($identifier, $server, $username, $password, $database)
+	{
+		$PDO_connections[$identifier] = new PDO('mysql:host=' . $server . ';dbname=' . $database, $username, $password);
+	}
+	
+	public static function select_db($identifier)
+	{
+		if (array_key_exists($identifier, $PDO_connections)
+			self::$selected_db = $identifier;
+		else
+			throw new Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to select.');
+	}
+	
+	public static function get_pdo($identifier = null)
+	{
+		if ($identifier == null)
+			return $PDO_connections[$selected_db];
+		else if (array_key_exists($identifier, $PDO_connections)
+			return $PDO_connections[$identifier];
+		else 
+			throw new Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to get the PDO object for.');
+	}
+	
 	/**
 	 * Execute a query, return a result
 	 * 
@@ -13,15 +39,15 @@ class DB
 	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
 	 * @return resource $result
 	 */
-  public static function query()
-  {
+	public static function query()
+	{
 		$arguments = func_get_args();
 		$query = array_shift($arguments);
 		if (count($arguments)>0) $query = self::replace($query,$arguments);
-		
-    $result = mysql_query($query) or die(mysql_error());
-    return $result;
-  }
+
+		$result = mysql_query($query) or die(mysql_error());
+		return $result;
+	}
 
 	/**
 	 * Execute a query and return an array of objects representing rows
