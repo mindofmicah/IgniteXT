@@ -8,33 +8,58 @@ namespace System;
 class Database
 {
 	private static $PDO_connections = array();
-	private static $selected_db = '';
+	private static $selected_connection = '';
 	
-	public static function connect_db($identifier, $server, $username, $password, $database)
+	/**
+	 * Connects to a database server and stores the connection in $PDO_connections.
+	 *  
+	 * @param string $identifier A name used to identify this connection
+	 * @param string $server
+	 * @param string $username
+	 * @param string $password
+	 * @param string $database 
+	 */
+	public static function connect($identifier, $server, $username, $password, $database)
 	{
 		self::$PDO_connections[$identifier] = new \PDO('mysql:host=' . $server . ';dbname=' . $database, $username, $password);
-		if (count(self::$PDO_connections == 1)) self::$selected_db = $identifier;
+		if (count(self::$PDO_connections == 1)) self::$selected_connection = $identifier;
 	}
 	
-	public static function select_db($identifier)
+	/**
+	 * Uses the identifier to select a stored connection
+	 * 
+	 * @param string $identifier 
+	 */
+	public static function select_connection($identifier)
 	{
 		if (array_key_exists($identifier, $PDO_connections))
-			self::$selected_db = $identifier;
+			self::$selected_connection = $identifier;
 		else
 			throw new Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to select.');
 	}
 	
+	/**
+	 * Gets the PDO object for the stored connection
+	 * 
+	 * @param string $identifier
+	 * @return PDO $pdo
+	 */
 	public static function get_pdo($identifier = null)
 	{
 		if ($identifier == null)
-			return self::$PDO_connections[self::$selected_db];
+			return self::$PDO_connections[self::$selected_connection];
 		else if (array_key_exists($identifier, $PDO_connections))
 			return self::$PDO_connections[$identifier];
 		else 
 			throw new Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to get the PDO object for.');
 	}
 	
-	public static function selected_db() { return self::$selected_db; }
+	/**
+	 * Gets the identifier string for the currently selected connection
+	 * 
+	 * @return string $identifier
+	 */
+	public static function selected_connection() { return self::$selected_connection; }
 	
 	/**
 	 * Execute a query, return a result
@@ -60,12 +85,12 @@ class Database
 	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
 	 * @return array $rows
 	 */
-  public static function rows()
-  {
+	public static function rows()
+	{
 		$arguments = func_get_args();
 		$sth = call_user_func_array('self::query', $arguments);
 		return $sth->fetchAll(\PDO::FETCH_ASSOC);
-  }
+	}
 	
 	/**
 	 * Execute a query and return an associative array of associative arrays representing rows, 
@@ -96,33 +121,33 @@ class Database
 		return $rows_key;
 	}
 
-  /**
+	/**
 	 * Execute a query and return a single associative array representing a row
 	 * 
 	 * @param string $query
 	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
 	 * @param array $row
 	 */
-  public static function row()
-  {
+	public static function row()
+	{
 		$arguments = func_get_args();
 		$sth = call_user_func_array('self::query', $arguments);
 		return $sth->fetch(\PDO::FETCH_ASSOC);
-  }
+	}
  
-  /**
+	/**
 	 * Execute a query and return the first field that was selected
 	 * 
 	 * @param string $query
 	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
 	 * @return string $field
 	 */
-  public static function field()
-  {
+	public static function field()
+	{
 		$arguments = func_get_args();
 		$sth = call_user_func_array('self::query', $arguments);
 		return $sth->fetchColumn();
-  }
+	}
 	
 	/**
 	 * Execute a query and return the insert id

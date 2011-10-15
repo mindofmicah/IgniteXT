@@ -1,4 +1,4 @@
 <?php
 
-//\System\Database::connect_db('identifier','server','username','password','database');
-\System\Database::connect_db('main','localhost','root','','database');
+//\System\Database::connect('identifier','server','username','password','database');
+\System\Database::connect('main','localhost','root','','database');
