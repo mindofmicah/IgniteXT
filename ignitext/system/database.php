@@ -4,19 +4,21 @@
  * 
  * Manages connections and runs queries.  This class servers as a wrapper for PDO.
  */
-class DB
+namespace System;
+class Database
 {
-	static $PDO_connections = array();
-	static $selected_db = '';
+	private static $PDO_connections = array();
+	private static $selected_db = '';
 	
 	public static function connect_db($identifier, $server, $username, $password, $database)
 	{
-		$PDO_connections[$identifier] = new PDO('mysql:host=' . $server . ';dbname=' . $database, $username, $password);
+		self::$PDO_connections[$identifier] = new \PDO('mysql:host=' . $server . ';dbname=' . $database, $username, $password);
+		if (count(self::$PDO_connections == 1)) self::$selected_db = $identifier;
 	}
 	
 	public static function select_db($identifier)
 	{
-		if (array_key_exists($identifier, $PDO_connections)
+		if (array_key_exists($identifier, $PDO_connections))
 			self::$selected_db = $identifier;
 		else
 			throw new Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to select.');
@@ -25,12 +27,14 @@ class DB
 	public static function get_pdo($identifier = null)
 	{
 		if ($identifier == null)
-			return $PDO_connections[$selected_db];
-		else if (array_key_exists($identifier, $PDO_connections)
-			return $PDO_connections[$identifier];
+			return self::$PDO_connections[self::$selected_db];
+		else if (array_key_exists($identifier, $PDO_connections))
+			return self::$PDO_connections[$identifier];
 		else 
 			throw new Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to get the PDO object for.');
 	}
+	
+	public static function selected_db() { return self::$selected_db; }
 	
 	/**
 	 * Execute a query, return a result
@@ -43,14 +47,14 @@ class DB
 	{
 		$arguments = func_get_args();
 		$query = array_shift($arguments);
-		if (count($arguments)>0) $query = self::replace($query,$arguments);
-
-		$result = mysql_query($query) or die(mysql_error());
-		return $result;
+		$dbh = self::get_pdo();
+		$sth = $dbh->prepare($query);
+		$sth->execute($arguments);
+		return $sth;
 	}
 
 	/**
-	 * Execute a query and return an array of objects representing rows
+	 * Execute a query and return an array of associative arrays representing rows
 	 * 
 	 * @param string $query
 	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
@@ -59,71 +63,51 @@ class DB
   public static function rows()
   {
 		$arguments = func_get_args();
-		$query = array_shift($arguments);
-		if (count($arguments)>0) $query = self::replace($query,$arguments);
-		
-    $result = self::query($query);
-    if (mysql_num_rows($result)==0) return false;
-    $rows = array();
-		
-		while ($row = mysql_fetch_object($result)) $rows[] = $row;
-		
-    return $rows;
+		$sth = call_user_func_array('self::query', $arguments);
+		return $sth->fetchAll(\PDO::FETCH_ASSOC);
   }
 	
 	/**
-	 * Execute a query and return an array of objects representing rows, uses $key to create associative array.
-	 * If $key = 'user_id' then the array will be in this form:
-	 * $users['1092']->first_name
+	 * Execute a query and return an associative array of associative arrays representing rows, 
+	 * uses $key to create associative array.
 	 * 
-	 * @param string $query
+	 * If $key = 'user_id' then the array will be in this form:
+	 * $users['1092']['first_name']
+	 * 
 	 * @param string $key
+	 * @param string $query
 	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
 	 * @return array $rows
 	 */
 	public static function rows_key()
 	{
 		$arguments = func_get_args();
-		$query = array_shift($arguments);
-		if (count($arguments)>0) $key = array_shift($arguments);
-		if (count($arguments)>0) $query = self::replace($query,$arguments);
 		
-		$result = self::query($query);
-    if (mysql_num_rows($result)==0) return false;
-    $rows = array();
+		if (count($arguments) > 1) $key = array_shift($arguments);
+		else throw new Exception('The rows_key function requires at least 2 parameters: $key and $query.');
+				
+		$rows = call_user_func_array('self::rows', $arguments);
+		if (array_key_exists($key,$rows[0]) == false) 
+			throw new Exception('The specified key does not exist in the result set.');
 		
-		//Check if key exists, if not, clear it and reset mysql row
-		if ($key!='')
-		{
-			$row = mysql_fetch_object($result);
-			if (!property_exists($row,$key)) $key = '';
-			mysql_data_seek($result,0);
-		}
+		foreach ($rows as $row) 
+			$rows_key[ $row[$key] ] = $row;
 		
-		if ($key!='')
-			while ($row = mysql_fetch_object($result)) $rows[ $row->$key ] = $row;
-		else
-			while ($row = mysql_fetch_object($result)) $rows[] = $row;
-		
-    return $rows;	
+		return $rows_key;
 	}
 
   /**
-	 * Execute a query and return a single object representing a row
+	 * Execute a query and return a single associative array representing a row
 	 * 
 	 * @param string $query
 	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
-	 * @param stdClass $object
+	 * @param array $row
 	 */
   public static function row()
   {
 		$arguments = func_get_args();
-		$query = array_shift($arguments);
-		if (count($arguments)>0) $query = self::replace($query,$arguments);
-		
-    $result = self::query($query);
-    if (mysql_num_rows($result)==0) return false;
-    return mysql_fetch_object($result);
+		$sth = call_user_func_array('self::query', $arguments);
+		return $sth->fetch(\PDO::FETCH_ASSOC);
   }
  
   /**
@@ -136,11 +120,8 @@ class DB
   public static function field()
   {
 		$arguments = func_get_args();
-		$query = array_shift($arguments);
-		if (count($arguments)>0) $query = self::replace($query,$arguments);
-		
-    $result = self::query($query);
-    return mysql_result($result,0);
+		$sth = call_user_func_array('self::query', $arguments);
+		return $sth->fetchColumn();
   }
 	
 	/**
@@ -153,71 +134,9 @@ class DB
 	public static function insert()
 	{
 		$arguments = func_get_args();
-		$query = array_shift($arguments);
-		if (count($arguments)>0) $query = self::replace($query,$arguments);
-		
-		self::query($query);
-		return mysql_insert_id();
+		$sth = call_user_func_array('self::query', $arguments);
+		$dbh = self::get_pdo();
+		return $dbh->lastInsertId();
 	}
-	
-	/**
-	 * Escapes an array BY REFERENCE, changes original array passed to function
-	 * 
-	 * @param array $fields
-	 */
-	public static function escape_array(&$fields)
-	{
-		foreach ($fields as &$field) $field = mysql_real_escape_string($field);
-	}
-	
-	/**
-	 * Replaces question marks in a query with mysql escaped fields
-	 * Usage: DB::replace($query, $field1, $field2, ...);
-	 * 
-	 * @param string $query
-	 * @param string $field
-	 * @return string $replaced
-	 */
-	public static function replace()
-	{
-		$arguments = func_get_args();
-		$query = array_shift($arguments);
-		
-		$fields = array();
-		
-		foreach ($arguments as $argument)
-		{
-			if (is_array($argument)) 
-			{
-				$argument = array_values($argument); //Associative array to numeric array
-				$fields = array_merge($fields, $argument);
-			}
-			else $fields[] = $argument;
-		}
-		
-		self::escape_array($fields);
-		
-		$escape_query = '';
-		$parts = explode('?',$query);
-		for ($x=0; $x<count($parts); $x++)
-		{
-			$escape_query .= $parts[$x];
-			if ($x<count($parts)-1)
-			{
-				$escape_query .= '\'';
-				if ($x != (count($parts)-1) && isset($fields[$x])) $escape_query .= $fields[$x];
-				$escape_query .= '\'';
-			}
-		}
-		return $escape_query;
-	}
-	
-	/**
-	 * Mysql escapes a value and puts single quotes around it
-	 * 
-	 * @param string $value
-	 * @return string $escaped_value
-	 */
-	public static function x($value) { return '\'' . mysql_real_escape_string($value) . '\''; }
 	
 }
