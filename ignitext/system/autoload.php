@@ -9,15 +9,15 @@ function ignitext_autoload($class)
 {
 	$valid_folders = array('system', 'models', 'libraries');
 
+	$class = strtolower($class);
 	$parts = explode('\\', $class);
 	
-	if (in_array(strtolower($parts[0]), $valid_folders) == false) return;
+	if (in_array($parts[0], $valid_folders) == false) return;
 
 	$filename = array_pop($parts);
 
 	$path = implode('/', $parts);
 	$path = str_replace('..', '.', $path);
-	$path = strtolower($path);
 
 	if (file_exists(APPDIR . $path . '/' . $filename . '.php'))
 		include APPDIR . $path . '/' . $filename . '.php';
