@@ -22,7 +22,7 @@ class Database
 	public static function connect($identifier, $server, $username, $password, $database)
 	{
 		self::$PDO_connections[$identifier] = new \PDO('mysql:host=' . $server . ';dbname=' . $database, $username, $password);
-		if (count(self::$PDO_connections == 1)) self::$selected_connection = $identifier;
+		if (count(self::$PDO_connections) == 1) self::$selected_connection = $identifier;
 	}
 	
 	/**
@@ -32,7 +32,7 @@ class Database
 	 */
 	public static function select_connection($identifier)
 	{
-		if (array_key_exists($identifier, $PDO_connections))
+		if (array_key_exists($identifier, self::$PDO_connections))
 			self::$selected_connection = $identifier;
 		else
 			throw new Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to select.');
@@ -48,7 +48,7 @@ class Database
 	{
 		if ($identifier == null)
 			return self::$PDO_connections[self::$selected_connection];
-		else if (array_key_exists($identifier, $PDO_connections))
+		else if (array_key_exists($identifier, self::$PDO_connections))
 			return self::$PDO_connections[$identifier];
 		else 
 			throw new Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to get the PDO object for.');
