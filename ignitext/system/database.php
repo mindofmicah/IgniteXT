@@ -90,7 +90,7 @@ class Database
 	{
 		$arguments = func_get_args();
 		$sth = call_user_func_array('self::query', $arguments);
-		return $sth->fetchAll(\PDO::FETCH_ASSOC);
+		return $sth->fetchAll(\PDO::FETCH_OBJ);
 	}
 	
 	/**
@@ -133,7 +133,7 @@ class Database
 	{
 		$arguments = func_get_args();
 		$sth = call_user_func_array('self::query', $arguments);
-		return $sth->fetch(\PDO::FETCH_ASSOC);
+		return $sth->fetch(\PDO::FETCH_OBJ);
 	}
  
 	/**
