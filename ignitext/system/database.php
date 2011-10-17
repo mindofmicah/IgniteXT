@@ -72,6 +72,7 @@ class Database
 	{
 		$arguments = func_get_args();
 		$query = array_shift($arguments);
+		if (count($arguments)==1 && is_array($arguments[0])) $arguments = $arguments[0];
 		$dbh = self::get_pdo();
 		$sth = $dbh->prepare($query);
 		$sth->execute($arguments);
