@@ -80,7 +80,7 @@ class Database
 	}
 
 	/**
-	 * Execute a query and return an array of associative arrays representing rows
+	 * Execute a query and return an array of objects representing rows
 	 * 
 	 * @param string $query
 	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
@@ -94,7 +94,7 @@ class Database
 	}
 	
 	/**
-	 * Execute a query and return an associative array of associative arrays representing rows, 
+	 * Execute a query and return an associative array of objects representing rows, 
 	 * uses $key to create associative array.
 	 * 
 	 * If $key = 'user_id' then the array will be in this form:
@@ -123,7 +123,7 @@ class Database
 	}
 
 	/**
-	 * Execute a query and return a single associative array representing a row
+	 * Execute a query and return a single object representing a row
 	 * 
 	 * @param string $query
 	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
