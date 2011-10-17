@@ -2,7 +2,7 @@
 /**
  * Database Manager
  * 
- * Manages connections and runs queries.  This class servers as a wrapper for PDO.
+ * Manages connections and runs queries.  This class serves as a wrapper for PDO.
  */
 namespace System;
 class Database
