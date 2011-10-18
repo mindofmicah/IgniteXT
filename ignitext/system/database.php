@@ -12,6 +12,8 @@ class Database
 	
 	/**
 	 * Connects to a database server and stores the connection in $PDO_connections.
+	 *
+	 * @todo Make this function support other PDO drivers instead of just mysql
 	 *  
 	 * @param string $identifier A name used to identify this connection
 	 * @param string $server
