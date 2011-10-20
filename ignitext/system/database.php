@@ -12,8 +12,6 @@ class Database
 	
 	/**
 	 * Connects to a database server and stores the connection in $PDO_connections.
-	 *
-	 * @todo Make this function support other PDO drivers instead of just mysql
 	 *  
 	 * @param string $identifier A name used to identify this connection
 	 * @param string $server
@@ -21,9 +19,23 @@ class Database
 	 * @param string $password
 	 * @param string $database 
 	 */
-	public static function connect($identifier, $server, $username, $password, $database)
+	public static function connect($identifier, $driver, $server, $username, $password, $database)
 	{
-		self::$PDO_connections[$identifier] = new \PDO('mysql:host=' . $server . ';dbname=' . $database, $username, $password);
+		self::$PDO_connections[$identifier] = new \PDO($driver . ':host=' . $server . ';dbname=' . $database, $username, $password);
+		if (count(self::$PDO_connections) == 1) self::$selected_connection = $identifier;
+	}
+	
+	/**
+	 * Connects to a database the same way as the connect function but uses a DSN string instead
+	 * 
+	 * @param string $identifier A name used to identify this connection
+	 * @param string $dsn Data Source Name, contains information required to connect to a database
+	 * @param string $username
+	 * @param string $password
+	 */
+	public static function connect_dsn($identifier, $dsn, $username, $password)
+	{
+		self::$PDO_connections[$identifier] = new \PDO($dsn, $username, $password);
 		if (count(self::$PDO_connections) == 1) self::$selected_connection = $identifier;
 	}
 	
