@@ -17,15 +17,15 @@ class IXT_Form_Validation
 	private $pre_delim;
 	private $post_delim;
 	
-	public function is_valid()	{	return $this->valid; }
-	public function is_checked() {	return $this->checked; }
+	public function is_valid() { return $this->valid; }
+	public function is_checked() { return $this->checked; }
 
 	public function set_rules($rules) { $this->rules = $rules; }
-  public function add_rules($rules)	{	$this->rules = array_merge($this->rules, $rules);	}
+	public function add_rules($rules) { $this->rules = array_merge($this->rules, $rules); }
 	public function clear_rules() { $this->rules = array(); }
 
 	public function set_error($key, $message) { $this->errors[$key] = $message; $this->valid = false; }
-	public function clear_errors()	{	$this->errors = array(); $this->valid = true;	}
+	public function clear_errors() { $this->errors = array(); $this->valid = true; }
 
 	public function set_delim($pre_delim,$post_delim) { $this->pre_delim = $pre_delim; $this->post_delim = $post_delim; }
 
