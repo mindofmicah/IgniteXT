@@ -4,6 +4,9 @@
  * 
  * Validates user input. Can also set form values when validation fails and display
  * error messages either in a block or individually.
+ * 
+ * TODO: Support multidimensional arrays.
+ * 
  */
 namespace Libraries;
 class IXT_Form_Validation
@@ -12,7 +15,7 @@ class IXT_Form_Validation
 	private $errors = array();
 	private $checked = false;
 	private $valid = true;
-	private $rule_functions = array();
+	private $rule_class;
 	
 	private $pre_delim;
 	private $post_delim;
@@ -29,6 +32,12 @@ class IXT_Form_Validation
 
 	public function set_delim($pre_delim,$post_delim) { $this->pre_delim = $pre_delim; $this->post_delim = $post_delim; }
 
+	public function __construct($rule_class = null)
+	{
+		if ($rule_class == null) $rule_class = new \Libraries\IXT_Validation();
+		else $this->rule_class = $rule_class;
+	}
+	
 	/**
 	 * Uses the rules that were previously set to run validation on a given array.
 	 * 
@@ -49,11 +58,25 @@ class IXT_Form_Validation
 				if ($output !== true) $this->errors[$key] = str_replace('%name%',$name);
 			}
 		}
-		if (count($this->errors)>0) $this->valid = false;
+		if (count($this->errors) > 0) $this->valid = false;
 		$this->checked = true;
 		return $this->valid;
 	}
 
+	/**
+	 * This function returns the value of an array using a string like so:
+	 * 'person' -> $form['person']
+	 * This function will be more complicated when implementing multidimensional arrays:
+	 * 'people[5]' -> $form['people'][5]
+	 * 
+	 * @param array $form
+	 * @param string $key
+	 * @return string $value
+	 */
+	public function get_value($form, $key)
+	{
+		return $form[$key];
+	}
 	
 	public function get_error($key)
 	{
