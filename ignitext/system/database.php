@@ -108,6 +108,22 @@ class Database
 	}
 	
 	/**
+	 * Execute a query and return an array of class objects representing rows
+	 * 
+	 * @param string $class_name
+	 * @param string $query
+	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
+	 * @return class $rows
+	 */
+	public static function class_rows()
+	{
+		$arguments = func_get_args();
+		$class_name = array_shift($arguments);
+		$sth = call_user_func_array('self::query', $arguments);
+		return $sth->fetchAll(\PDO::FETCH_CLASS, $class_name);
+	}
+	
+	/**
 	 * Execute a query and return an associative array of objects representing rows, 
 	 * uses $key to create associative array.
 	 * 
@@ -148,6 +164,21 @@ class Database
 		$arguments = func_get_args();
 		$sth = call_user_func_array('self::query', $arguments);
 		return $sth->fetch(\PDO::FETCH_OBJ);
+	}
+	
+	/**
+	 * Execute a query and return a single class object representing a row
+	 * 
+	 * @param string $query
+	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
+	 * @param array $row
+	 */
+	public static function class_row()
+	{
+		$arguments = func_get_args();
+		$class_name = array_shift($arguments);
+		$sth = call_user_func_array('self::query', $arguments);
+		return $sth->fetch(\PDO::FETCH_CLASS, $class_name);
 	}
  
 	/**
