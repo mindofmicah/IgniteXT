@@ -169,16 +169,18 @@ class Database
 	/**
 	 * Execute a query and return a single class object representing a row
 	 * 
+	 * @param string $class_name
 	 * @param string $query
 	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
-	 * @param array $row
+	 * @param class $row
 	 */
 	public static function class_row()
 	{
 		$arguments = func_get_args();
 		$class_name = array_shift($arguments);
 		$sth = call_user_func_array('self::query', $arguments);
-		return $sth->fetch(\PDO::FETCH_CLASS, $class_name);
+		$sth->setFetchMode(\PDO::FETCH_CLASS, $class_name);
+		return $sth->fetch(\PDO::FETCH_CLASS);
 	}
  
 	/**
