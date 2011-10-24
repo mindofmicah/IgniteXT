@@ -34,11 +34,13 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase {
 			'brian@website-duck.com' => true,
 			'bri\'an@websiteduck.com' => true,
 			'brian@duck.museum' => true,
+			'bri+an@websiteduck.com' => true,
 			'brian@websiteduck.com.' => false,
 			'brian@websiteduck.c' => false,
 			'brian@websiteduck.-com' => false,
 			'brian@website\'duck.com' => false,
 			'brian@duck.mu-seum' => false,
+			'brian@website+duck.com' => false,
 			'brian@\u008fwebsiteduck.com' => false
 		);
 		foreach ($test_data as $data => $assert)
