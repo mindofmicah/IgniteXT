@@ -15,7 +15,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase {
 	protected function tearDown() {	}
 
 	public function testRequired() {
-		$this->assertFalse($this->validation->required(null), 'null');
+		$this->assertFalse($this->validation->required(null), 'Input: null');
 		
 		$test_data = array(
 				'' => false,
@@ -23,11 +23,11 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase {
 				0 => true
 		);
 		foreach ($test_data as $data => $assert)
-			$this->assertEquals( $this->validation->required($data), $assert, 'Input:'.(string)$data);
+			$this->assertEquals( $this->validation->required($data), $assert, 'Input: '.(string)$data);
 	}
 
 	public function testEmail() {
-		$this->assertFalse( $this->validation->email(null) );
+		$this->assertFalse( $this->validation->email(null), 'Input: null');
 		
 		$test_data = array(
 			'brian@websiteduck.com' => true,
@@ -44,7 +44,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase {
 			'brian@\u008fwebsiteduck.com' => false
 		);
 		foreach ($test_data as $data => $assert)
-			$this->assertEquals( $this->validation->email($data), $assert, 'Input:'.(string)$data);
+			$this->assertEquals( $this->validation->email($data), $assert, 'Input: '.(string)$data);
 	}
 
 }
