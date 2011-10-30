@@ -6,11 +6,11 @@
  * 
  * http://www.example.com/admin/users/view/id/1000
  *   \Router::$route = "/admin/users/view/id/1000"
- *   \Router::$controller_path = "[APPDIR]controllers/admin/"
- *   \Router::$controller_file = "users.php"
- *   \Router::$controller_namespace = "\Controllers\admin"
- *   \Router::$controller_class = "Users"
- *   \Router::$controller_method = "view"
+ *   \Router::$controller->path = "[APPDIR]controllers/admin/"
+ *   \Router::$controller->file = "users.php"
+ *   \Router::$controller->namespace = "\Controllers\admin"
+ *   \Router::$controller->class = "users"
+ *   \Router::$controller->method = "view"
  *   $_GET['id'] = 1000
  */
 namespace System;
@@ -19,18 +19,45 @@ class Router {
 	private static $route;
 
 	public static $manual_routes = array();
-	public static $controller_path;
-	public static $controller_file;
-	public static $controller_namespace;
-	public static $controller_class;
-	public static $controller_method;
+	public static $controller;
 
+	/**
+	 * Parses the URL to determine which controller and method should be used
+	 * to display the page, then calls that method.
+	 */
 	public static function route()
 	{
-		self::get_route_from_request();
-		self::check_manually_defined_routes();
-		self::parse_route_string();
-		self::load_controller_and_call_method();
+		//Get route from request
+		$route = isset($_GET['r']) ? $_GET['r'] : '';
+		$route = trim($route, '/');
+		$route = self::manual_route($route);
+		
+		$controller = self::get_controller_from_route($route);
+		
+		//Any leftover route parts become GET variables
+		self::set_get_variables($controller->leftovers);
+		
+		//If the method doesn't exist, try prefixing it with "m_".  This is useful
+		//if you want to have a page named "list" but PHP won't allow you to have
+		//a method named "list".
+		if (!method_exists($controller->namespace . $controller->class, $controller->method))
+			$controller->method = 'm_' . $controller->method;
+		
+		//The method doesn't exist.  Get the 404 controller.
+		if (!method_exists($controller->namespace . $controller->class, $controller->method))
+			$controller = self::get_404_controller();
+		
+		//The 404 controller doesn't exist.  Fail gracefully.
+		if (!method_exists($controller->namespace . $controller->class, $controller->method))
+		{
+			header("HTTP/1.0 404 Not Found");
+			echo "404 Not Found";
+			die();
+		}
+		
+		self::$controller = $controller;
+		self::$route = $route;
+		call_user_func($controller->namespace . $controller->class . '::' . $controller->method);
 	}
 	
 	/**
@@ -44,79 +71,84 @@ class Router {
 		self::$manual_routes[] = array('route' => $route, 'controller' => $controller);
 	}
 	
-	private function get_route_from_request()
-	{
-		self::$route = isset($_GET['r']) ? $_GET['r'] : '';
-		self::$route = trim(self::$route, '/');
-	}
-	
 	/**
-	 * Checks to see if a route was explicity defined.  Normally this is
-	 * done by a configuration file setting the Router::$manual_routes array.
+	 * Returns new route based on a manually defined route. Manual routes are
+	 * normally created by using a configuration file that calls 
+	 * \Router::add_manual_route()
+	 * 
+	 * @todo Regular Expressions
+	 * 
+	 * @param $route
+	 * @return $new_route
 	 */
-	private function check_manually_defined_routes()
+	public function manual_route($route)
 	{
+		$new_route = $route;
 		foreach (self::$manual_routes as $manual_route)
 		{
-			if (substr(self::$route, 0, strlen($manual_route['route'])) == $manual_route['route'])
+			if (substr($route, 0, strlen($manual_route['route'])) == $manual_route['route'])
 			{
 				//Appends the extra stuff from self::$route onto $controller
-				self::$route = $manual_route['controller'] . substr(self::$route,strlen($manual_route['route']));
-				return;
+				$new_route = $manual_route['controller'] . substr($route,strlen($manual_route['route']));
+				return $new_route;
 			}
 		}
+		return $route;
 	}
 	
 	/**
-	 * Gets information from the route string that is needed to load the
-	 * controller and call the method.  It may also set GET variables if any were
-	 * included in the URL.
+	 * Gets the controller object using the specified route.
+	 * 
+	 * @param string $route
+	 * @return object $controller
 	 */
-	private function parse_route_string()
+	public function get_controller_from_route($route)
 	{
-		if (self::$route == '') $route_parts = array();
-		else $route_parts = explode('/', self::$route);
+		$controller = new \stdClass();
+		if ($route == '') $route_parts = array();
+		else $route_parts = explode('/', $route);
 		
-		self::$controller_path = APPDIR . 'controllers/';
-		self::$controller_namespace = '\\Controllers\\';
+		$controller->path = APPDIR . 'source/';
+		$controller->namespace = '\\Controllers\\';
 		
 		//Find the controller file
 		if (count($route_parts) != 0)
 		{
-			self::$controller_file = array_shift($route_parts);
-			while (!file_exists(self::$controller_path . self::$controller_file . '.php'))
+			$controller->file = array_shift($route_parts);
+			while (!file_exists($controller->path . 'controllers/' . $controller->file . '.php'))
 			{
 				if (count($route_parts) > 0)
 				{
-					self::$controller_path .= self::$controller_file . '/';
-					self::$controller_namespace .= self::$controller_file . '\\';
-					self::$controller_file = array_shift($route_parts);
-					self::$controller_file = str_replace('..', '.', self::$controller_file);
+					$controller->path .= $controller->file . '/';
+					$controller->namespace .= $controller->file . '\\';
+					$controller->file = array_shift($route_parts);
+					$controller->file = str_replace('..', '.', $controller->file);
 				}
 				else //We are out of $route_parts and we haven't found the controller file
 				{
-					self::set_404_request();
-					return;					
+					$controller = self::get_404_controller();
+					return $controller;
 				}
 			}
 		}
-		else //The route is empty, use the 'Main' controller
+		else //The route is empty, use the 'index' controller
 		{
-			self::$controller_file = 'main';
+			$controller->file = 'index';
 		}
 
-		self::$controller_class = ucfirst(self::$controller_file);
-		self::$controller_file .= '.php';
+		$controller->class = strtolower($controller->file);
+		$controller->file .= '.php';
 
 		//If the number of route_parts is odd, then it contains a method
 		//otherwise it only contains variables, so show the index method
 		if (count($route_parts) > 0 && count($route_parts) % 2 == 1)
-			self::$controller_method = array_shift($route_parts);
+			$controller->method = array_shift($route_parts);
 		else
-			self::$controller_method = 'index';
+			$controller->method = 'index';
 		
-		//Any leftover route parts become GET variables
-		self::set_get_variables($route_parts);
+		$controller->leftovers = $route_parts;
+		
+		return $controller;
 	}
 	
 	/**
@@ -141,54 +173,19 @@ class Router {
 	}
 	
 	/**
-	 * Sets the self::$controller_ variables so that the
-	 * load_controller_and_call_method function will show the 404 page.
+	 * Gets the controller object for the 404 page.
+	 * 
+	 * @return object $controller
 	 */
-	private function set_404_request()
+	public function get_404_controller()
 	{
-		//If we're looking for the 404 controller here, it means we didn't find it 
-		//the first time, so just echo a message and give up.
-		if (self::$controller_path == APPDIR . 'controllers/' && self::$controller_file == '404.php')
-		{
-			echo "404 Not Found";
-			die();
-		}
-				
-		header("HTTP/1.0 404 Not Found");
-		self::$controller_path = APPDIR . 'controllers/';
-		self::$controller_namespace = '\\Controllers\\';
-		self::$controller_file = '404.php';
-		self::$controller_method = 'index';
-		self::$controller_class = '_404';
+		$controller = new \stdClass();
+		$controller->path = APPDIR . 'controllers/';
+		$controller->namespace = '\\Controllers\\';
+		$controller->file = '404.php';
+		$controller->method = 'index';
+		$controller->class = '_404';
+		return $controller;
 	}
 	
-	/**
-	 * Creates an instance of the requested controller and calls the requested
-	 * method in that controller.
-	 */
-	private function load_controller_and_call_method()
-	{
-		if (!file_exists(self::$controller_path . self::$controller_file)) 
-		{
-			self::set_404_request();
-			self::load_controller_and_call_method();
-			return;
-		}
-		
-		include self::$controller_path . self::$controller_file;
-		
-		$class = self::$controller_namespace . self::$controller_class;
-		$controller = new $class;
-
-		if (method_exists($controller, self::$controller_method))
-			$controller->{self::$controller_method}();
-		elseif (method_exists($controller, 'm_' . self::$controller_method))
-			$controller->{'m_' . self::$controller_method}();
-		else
-		{
-			self::set_404_request();
-			self::load_controller_and_call_method();
-		}
-	}
-
 }
