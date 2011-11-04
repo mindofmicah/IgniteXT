@@ -151,6 +151,34 @@ class Router {
 		return $controller;
 	}
 	
+	private function find_source_controller($route_parts)
+	{
+		if (!is_array($route_parts) || count($route_parts)==0) return false;
+		$controller = new \stdClass();
+		$path_found = false;
+		$check_dirs = array(APPDIR, SHRDIR, IXTDIR);
+		foreach ($check_dirs as $dir)
+		{
+			$route_parts_copy = $route_parts;
+			$controller->path = 'source/controllers/';
+			$controller->file = array_shift($route_parts_copy);
+			while (!file_exists($dir . $controller->path . $controller->file . '.php') && is_dir($controller->path) && !empty($route_parts_copy))
+			{
+				$last_good_path = $controller->path;
+				$controller->path .= $controller->file . '/';
+				$controller->namespace .= $controller->file . '\\';
+				$controller->file = array_shift($route_parts_copy);
+			}
+			if (file_exists($path)) { $path_found = true; break; }
+		}
+		
+	}
+	
+	private function find_package_controller($route_parts)
+	{
+		$check_dirs = array(APPDIR, SHRDIR, IXTDIR);
+	}
+	
 	/**
 	 * Turns remaining $route_parts into GET variables.
 	 * 
