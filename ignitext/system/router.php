@@ -6,20 +6,21 @@
  * 
  * http://www.example.com/admin/users/view/id/1000
  *   \Router::$route = "/admin/users/view/id/1000"
- *   \Router::$controller->path = "[APPDIR]controllers/admin/"
+ *   \Router::$controller->dir = "[APPDIR]controllers/admin/"
  *   \Router::$controller->file = "users.php"
- *   \Router::$controller->namespace = "\Controllers\admin"
- *   \Router::$controller->class = "users"
- *   \Router::$controller->method = "view"
+ *   \Router::$controller->namespace = "\Controllers\admin\"
+ *   \Router::$controller->controller = "users"
+ *   \Router::$controller->action = "view"
  *   $_GET['id'] = 1000
  */
 namespace System;
 class Router {
 
-	private static $route;
+	private static $route_string;
 
+	public static $max_search_depth = 3;
 	public static $manual_routes = array();
-	public static $controller;
+	public static $route;
 
 	/**
 	 * Parses the URL to determine which controller and method should be used
@@ -28,36 +29,35 @@ class Router {
 	public static function route()
 	{
 		//Get route from request
-		$route = isset($_GET['r']) ? $_GET['r'] : '';
-		$route = trim($route, '/');
-		$route = self::manual_route($route);
+		$route_string = isset($_GET['r']) ? $_GET['r'] : '';
+		$route_string = trim($route_string, '/');
+		$route_string = self::manual_route($route_string);
 		
-		$controller = self::get_controller_from_route($route);
+		$route = self::get_route($route_string);
 		
 		//Any leftover route parts become GET variables
-		self::set_get_variables($controller->leftovers);
+		self::set_get_variables($route->leftovers);
 		
 		//If the method doesn't exist, try prefixing it with "m_".  This is useful
-		//if you want to have a page named "list" but PHP won't allow you to have
+		//if you want to have an action named "list" but PHP won't allow you to have
 		//a method named "list".
-		if (!method_exists($controller->namespace . $controller->class, $controller->method))
-			$controller->method = 'm_' . $controller->method;
+		if (!method_exists($route->controller->namespace . $route->controller->controller, $route->controller->action))
+			$route->controller->action = 'm_' . $route->controller->action;
 		
 		//The method doesn't exist.  Get the 404 controller.
-		if (!method_exists($controller->namespace . $controller->class, $controller->method))
-			$controller = self::get_404_controller();
+		if (!method_exists($route->controller->namespace . $route->controller->controller, $route->controller->action))
+			$route = self::get_404_route();
 		
 		//The 404 controller doesn't exist.  Fail gracefully.
-		if (!method_exists($controller->namespace . $controller->class, $controller->method))
+		if (!method_exists($route->controller->namespace . $route->controller->controller, $route->controller->action))
 		{
 			header("HTTP/1.0 404 Not Found");
 			echo "404 Not Found";
 			die();
 		}
 		
-		self::$controller = $controller;
 		self::$route = $route;
-		call_user_func($controller->namespace . $controller->class . '::' . $controller->method);
+		call_user_func($route->controller->namespace . $route->controller->controller . '::' . $route->controller->action);
 	}
 	
 	/**
@@ -97,86 +97,103 @@ class Router {
 	}
 	
 	/**
-	 * Gets the controller object using the specified route.
+	 * Gets the route object using the specified route string.
 	 * 
-	 * @param string $route
-	 * @return object $controller
+	 * @param string $route_string
+	 * @return object $route
 	 */
-	public function get_controller_from_route($route)
+	public function get_route($route_string)
 	{
-		$controller = new \stdClass();
-		if ($route == '') $route_parts = array();
-		else $route_parts = explode('/', $route);
-		
-		$controller->path = APPDIR . 'source/';
-		$controller->namespace = '\\Controllers\\';
-		
-		//Find the controller file
-		if (count($route_parts) != 0)
-		{
-			$controller->file = array_shift($route_parts);
-			while (!file_exists($controller->path . 'controllers/' . $controller->file . '.php'))
-			{
-				if (count($route_parts) > 0)
-				{
-					$controller->path .= $controller->file . '/';
-					$controller->namespace .= $controller->file . '\\';
-					$controller->file = array_shift($route_parts);
-					$controller->file = str_replace('..', '.', $controller->file);
-				}
-				else //We are out of $route_parts and we haven't found the controller file
-				{
-					$controller = self::get_404_controller();
-					return $controller;
-				}
-			}
-		}
-		else //The route is empty, use the 'index' controller
-		{
-			$controller->file = 'index';
-		}
-
-		$controller->class = strtolower($controller->file);
-		$controller->file .= '.php';
-
-		//If the number of route_parts is odd, then it contains a method
-		//otherwise it only contains variables, so show the index method
-		if (count($route_parts) > 0 && count($route_parts) % 2 == 1)
-			$controller->method = array_shift($route_parts);
-		else
-			$controller->method = 'index';
-		
-		$controller->leftovers = $route_parts;
-		
-		return $controller;
-	}
-	
-	private function find_source_controller($route_parts)
-	{
+		$route_parts = explode('/', $route_string);
 		if (!is_array($route_parts) || count($route_parts)==0) return false;
-		$controller = new \stdClass();
-		$path_found = false;
-		$check_dirs = array(APPDIR, SHRDIR, IXTDIR);
-		foreach ($check_dirs as $dir)
-		{
-			$route_parts_copy = $route_parts;
-			$controller->path = 'source/controllers/';
-			$controller->file = array_shift($route_parts_copy);
-			while (!file_exists($dir . $controller->path . $controller->file . '.php') && is_dir($controller->path) && !empty($route_parts_copy))
-			{
-				$last_good_path = $controller->path;
-				$controller->path .= $controller->file . '/';
-				$controller->namespace .= $controller->file . '\\';
-				$controller->file = array_shift($route_parts_copy);
-			}
-			if (file_exists($path)) { $path_found = true; break; }
-		}
 		
+		$search_dir_list = array(
+			array('search_dir' => APPDIR, 'package' => true),
+			array('search_dir' => SHRDIR, 'package' => true),
+			array('search_dir' => APPDIR, 'package' => false),
+			array('search_dir' => SHRDIR, 'package' => false)
+		);
+		
+		foreach ($search_dir_list as $key => $search_dir_info)
+		{
+			$search_dir = $search_dir_info['search_dir'];
+			$package = $search_dir_info['package'];
+			
+			$route = new \stdClass();
+			$route_parts_copy = $route_parts;
+			$depth = 0;
+			if ($package)
+			{
+				$package = array_shift($route_parts_copy);
+				$current_dir = $search_dir . 'packages/' . $package . '/controllers/';
+				$namespace =  '\\Controllers\\' . $package . '\\';
+			}
+			else
+			{
+				$current_dir = $search_dir . 'source/controllers/';
+				$namespace = '\\Controllers\\';
+			}
+			
+			if (!is_dir($current_dir)) continue;
+			
+			while (!empty($route_parts_copy))
+			{
+				if ($depth > self::$max_search_depth) break;
+				$route_piece = array_shift($route_parts_copy);
+				
+				if (file_exists($current_dir . $route_piece . '.php'))
+				{
+					$route->controller->dir = $current_dir;
+					$route->controller->file = $route_piece . '.php';
+					$route->controller->namespace = $namespace;
+					$route->controller->package = $package;
+					$route->controller->controller = $route_piece;
+					$route->controller->action = self::get_action($route_parts_copy);
+					$route->leftovers = $route_parts_copy;
+					return $route;
+				}
+				
+				$current_dir .= $route_piece . '/';
+				$namespace .= $route_piece . '\\';
+								
+				if (is_dir($current_dir)) 
+				{
+					$last_good_dirs[$key]['dir'] = $current_dir;
+					$last_good_dirs[$key]['namespace'] = $namespace;
+					$last_good_dirs[$key]['leftovers'] = $route_parts_copy;
+				}
+				else break;
+				
+				$depth++;
+			}
+		}
+			
+		//The controller file was not found, try index.php in the last good directories
+		foreach ($last_good_dirs as $last_good_dir)
+		{
+			if (file_exists($last_good_dir['path'] . 'index.php'))
+			{
+				$route->controller->dir = $last_good_dir['dir'];
+				$route->controller->file = 'index.php';
+				$route->controller->namespace = $last_good_dir['namespace'];
+				$route->controller->package = $package;
+				$route->controller->controller = 'index';
+				$route->controller->action = self::get_action($last_good_dir['leftovers']);
+				$route->leftovers = $last_good_dir['leftovers'];
+				return $route;
+			}
+		}
+
+		return false;
 	}
-	
-	private function find_package_controller($route_parts)
+
+	private function get_action(&$route_parts)
 	{
-		$check_dirs = array(APPDIR, SHRDIR, IXTDIR);
+		if (count($route_parts) % 2 == 1)
+			$action = shift($route_parts);
+		else 
+			$action = 'index';
+		return $action;
 	}
 	
 	/**
@@ -205,15 +222,14 @@ class Router {
 	 * 
 	 * @return object $controller
 	 */
-	public function get_404_controller()
+	public function get_404_route()
 	{
-		$controller = new \stdClass();
-		$controller->path = APPDIR . 'controllers/';
-		$controller->namespace = '\\Controllers\\';
-		$controller->file = '404.php';
-		$controller->method = 'index';
-		$controller->class = '_404';
-		return $controller;
+		$route->controller->dir = APPDIR . 'controllers/';
+		$route->controller->file = '404.php';
+		$route->controller->namespace = '\\Controllers\\';
+		$route->controller->controller = '_404';
+		$route->controller->action = 'index';
+		return $route;
 	}
 	
 }
