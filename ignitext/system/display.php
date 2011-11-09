@@ -5,12 +5,12 @@
 namespace System;
 class Display
 {
-	function load_view($file,$data=null)
+	public static function load_view($file,$data=null)
 	{   
 		if (is_array($data)) extract($data);
 
 		$file = str_replace('..','.',$file);
-		$file = APPDIR . 'views/' . $file;
+		$file = APPDIR . 'source/views/' . $file;
 		if (!file_exists($file.'.php'))
 		{  
 			echo "View Not Found: " . $file . ".php"; die();
@@ -18,7 +18,7 @@ class Display
 		require($file.'.php');
 	}
 
-	function return_view($file,$data=null)
+	public static function return_view($file,$data=null)
 	{
 		ob_start();
 		self::load_view($file,$data);
@@ -27,22 +27,14 @@ class Display
 		return $ret;
 	}
 
-	function tpl($title,$file,$data=null,$template='templates/main')
+	public static function template($title,$file,$data=null,$template='templates/main')
 	{
 		$data['content_title'] = $title;
 		$data['content_view'] = $file;
-		$this->load_view($template, $data);
+		self::load_view($template, $data);
 	}
 
-	function tpl_rb($title,$file,$rbfile,$data=null,$template='templates/main')
-	{
-		$data['content_title'] = $title;
-		$data['content_view'] = $file;
-		$data['rightbar_view'] = $rbfile;
-		$this->load_view($template, $data);
-	}
-
-	function widget($file,$data=null)
+	public static function widget($file,$data=null)
 	{
 		if (is_array($data)) extract($data);
 
