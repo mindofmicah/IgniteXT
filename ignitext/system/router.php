@@ -190,7 +190,7 @@ class Router {
 	private function get_action(&$route_parts)
 	{
 		if (count($route_parts) % 2 == 1)
-			$action = shift($route_parts);
+			$action = array_shift($route_parts);
 		else 
 			$action = 'index';
 		return $action;
