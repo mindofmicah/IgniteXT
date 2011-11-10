@@ -32,7 +32,6 @@ elseif (file_exists(SHRDIR . 'system/autoload.php')) include SHRDIR . 'system/au
 elseif (file_exists(IXTDIR . 'system/autoload.php')) include IXTDIR . 'system/autoload.php';
 else throw new Exception('Autoloader not found.');
 
-session_cache_limiter('public');
 session_start();
 
 foreach (glob(IXTDIR . 'config/*.php') as $filename) include $filename;
