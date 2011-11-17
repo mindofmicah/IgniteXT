@@ -15,7 +15,7 @@
  *==============================================================================*/
 
 /**
- * Configure Paths
+ * Define Paths
  */
 define('BASEURL','/');
 define('BASEDIR',dirname(__FILE__).'/');
@@ -34,8 +34,7 @@ else throw new Exception('Autoloader not found.');
 
 session_start();
 
-foreach (glob(IXTDIR . 'config/*.php') as $filename) include $filename;
-foreach (glob(SHRDIR . 'config/*.php') as $filename) include $filename;
-foreach (glob(APPDIR . 'config/*.php') as $filename) include $filename;
+$dirs = array(IXTDIR, SHRDIR, APPDIR);
+foreach ($dirs as $dir) foreach (glob($dir . 'config/*.php') as $config_file) include $config_file;
 
 \System\Router::route();
