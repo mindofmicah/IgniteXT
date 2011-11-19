@@ -5,17 +5,22 @@
 namespace System;
 class Display
 {
-	public static function load_view($file,$data=null)
+	public static function load_view($relative_file,$data=null)
 	{   
 		if (is_array($data)) extract($data);
 
-		$file = str_replace('..','.',$file);
-		$file = APPDIR . 'source/views/' . $file;
-		if (!file_exists($file.'.php'))
-		{  
-			echo "View Not Found: " . $file . ".php"; die();
-		}
-		require($file.'.php');
+		$relative_file = str_replace('..','.',$relative_file);
+		
+		$absolute_file = APPDIR . 'source/views/' . $relative_file . '.php';
+		if (file_exists($absolute_file)) { require($absolute_file); return; }
+		
+		$file_parts = explode('/',$relative_file);
+		$package = array_shift($file_parts);
+		$relative_file = implode('/',$file_parts);
+		$absolute_file = APPDIR . 'packages/' . $package . '/views/' . $relative_file . '.php';
+		if (file_exists($absolute_file)) { require($absolute_file); return; }
+		
+		echo "View Not Found: " . $relative_file . ".php"; die();
 	}
 
 	public static function return_view($file,$data=null)
