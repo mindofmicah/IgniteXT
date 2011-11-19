@@ -135,6 +135,9 @@ class Router {
 			}
 			
 			if (!is_dir($current_dir)) continue;
+			$last_good_dirs[$key]['dir'] = $current_dir;
+			$last_good_dirs[$key]['namespace'] = $namespace;
+			$last_good_dirs[$key]['leftovers'] = $route_parts_copy;
 			
 			while (!empty($route_parts_copy))
 			{
