@@ -43,6 +43,35 @@ class IXT_Validation
 		else if ($return_error_message == true) return 'must be a valid e-mail address.';
 		else return false;
 	}
+	
+	/**
+	 * Input must be an integer.  String must contain only numbers and leading zeros are not permitted.
+	 * 
+	 * @param string $input
+	 * @param boolean $return_error_message
+	 * @return mixed $valid
+	 */
+	public function integer($input, $return_error_message = false)
+	{
+		if ($input === (string)(int)$input) return true;
+		else if ($return_error_message == true) return 'must be an integer.';
+		else return false;
+	}
+	
+	/**
+	 * Input must be numeric.  "+0123.45e6" and "0xFF" are considered numeric.
+	 * 
+	 * @param type $input
+	 * @param type $return_error_message
+	 * @return type 
+	 */
+	public function numeric($input, $return_error_message = false)
+	{
+		if (is_numeric($input)) return true;
+		else if ($return_error_message == true) return 'must be a number.';
+		else return false;
+	}
+	
 }
 
 ?>
