@@ -62,14 +62,28 @@ class IXT_Validation
 	/**
 	 * Input must be numeric.  "+0123.45e6" and "0xFF" are considered numeric.
 	 * 
-	 * @param type $input
-	 * @param type $return_error_message
-	 * @return type 
+	 * @param string $input
+	 * @param boolean $return_error_message
+	 * @return mixed $valid
 	 */
 	public function numeric($input, $return_error_message = false)
 	{
 		if (is_numeric($input)) return true;
 		else if ($return_error_message == true) return 'must be a number.';
+		else return false;
+	}
+	
+	/**
+	 * Input must be decimal or integer. 
+	 * 
+	 * @param string $input
+	 * @param boolean $return_error_message
+	 * @return mixed $valid
+	 */
+	public function decimal($input, $return_error_message = false)
+	{
+		if (preg_match("/^[-+]?[0-9]*\.?[0-9]+$/", $input)) return true;
+		else if ($return_error_message == true) return 'must be a decimal number.';
 		else return false;
 	}
 	

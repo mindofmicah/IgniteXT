@@ -11,7 +11,8 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase {
 	protected function tearDown() {	}
 
 	//4 assertions
-	public function testRequired() {
+	public function testRequired() 
+	{
 		$this->assertFalse(IXT_Validation::required(null), 'Input: null');
 		
 		$test_data = array(
@@ -24,7 +25,8 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	//13 assertions
-	public function testEmail() {
+	public function testEmail() 
+	{
 		$this->assertFalse(IXT_Validation::email(null), 'Input: null');
 		
 		$test_data = array(
@@ -46,7 +48,8 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase {
 	}
 	
 	//24 assertions
-	public function testInteger() {
+	public function testInteger() 
+	{
 		$this->assertFalse(IXT_Validation::integer(null), 'Input: null');
 		$test_data = array(
 				array(0, true),
@@ -82,7 +85,8 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase {
 	}
 	
 	//24 assertions
-	public function testNumeric() {
+	public function testNumeric() 
+	{
 		$this->assertFalse(IXT_Validation::numeric(null), 'Input: null');
 		$test_data = array(
 				array(0, true),
@@ -114,6 +118,45 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase {
 		{
 			list($data, $assert) = $data_assert;
 			$this->assertEquals(IXT_Validation::numeric($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
+		}
+	}
+	
+	//26 assertions
+	public function testDecimal() 
+	{
+		$this->assertFalse(IXT_Validation::decimal(null), 'Input: null');
+		$test_data = array(
+				array(0, true),
+				array('-1', true),
+				array('1', true),
+				array('10', true),
+				array('1986', true),
+				array('1234567890', true),
+				array('9999999999', true), //is_numeric has better support for large numbers
+				array(0, true),
+				array(-1, true),
+				array(1, true),
+				array(10, true),
+				array(1986, true),
+				array(1234567890, true),
+				array(9999999999, true),
+				array('0.5', true),
+				array('9.99', true),
+				array('+1', true),
+				array('+1.25', true),
+				array('-1.25', true),
+				array('1e5', false),
+				array('0xA', false),
+				array(-1.5, true),
+				array(1.5, true),
+				array('a', false),
+				array('one', false)
+		);
+		
+		foreach ($test_data as $data_assert)
+		{
+			list($data, $assert) = $data_assert;
+			$this->assertEquals(IXT_Validation::decimal($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
 		}
 	}
 
