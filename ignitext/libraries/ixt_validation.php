@@ -46,6 +46,7 @@ class IXT_Validation
 	
 	/**
 	 * Input must be an integer.  String must contain only numbers and leading zeros are not permitted.
+	 * Integer input is also allowed.
 	 * 
 	 * @param string $input
 	 * @param boolean $return_error_message
@@ -53,7 +54,7 @@ class IXT_Validation
 	 */
 	public function integer($input, $return_error_message = false)
 	{
-		if ($input === (string)(int)$input) return true;
+		if ($input === (string)(int)$input || $input === (int)$input) return true;
 		else if ($return_error_message == true) return 'must be an integer.';
 		else return false;
 	}
