@@ -2,7 +2,7 @@
 namespace Libraries;
 
 error_reporting(E_ALL ^ E_NOTICE);
-require_once dirname(__FILE__) . '/../../../ignitext/libraries/ixt_validation.php';
+require_once dirname(__FILE__) . '/../../../ignitext/source/libraries/ixt_validation.php';
 
 class IXT_ValidationTest extends \PHPUnit_Framework_TestCase 
 {
