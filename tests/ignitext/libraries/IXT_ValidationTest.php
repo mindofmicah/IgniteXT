@@ -1,6 +1,7 @@
 <?php
 namespace Libraries;
 
+error_reporting(E_ALL ^ E_NOTICE);
 require_once dirname(__FILE__) . '/../../../ignitext/libraries/ixt_validation.php';
 
 class IXT_ValidationTest extends \PHPUnit_Framework_TestCase 
@@ -46,6 +47,33 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		{
 			list($data, $assert) = $data_assert;
 			$this->assertEquals(IXT_Validation::email($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
+		}
+	}
+	
+	public function testEmail_List()
+	{
+		$test_data = array(
+			array(null, false),
+			array('brian@websiteduck.com', true),
+			array('brian@website-duck.com', true),
+			array('bri\'an@websiteduck.com', true),
+			array('brian@duck.museum', true),
+			array('bri+an@websiteduck.com', true),
+			array('brian@websiteduck.com,brian@website-duck.com,bri\'an@websiteduck.com,brian@duck.museum,bri+an@websiteduck.com',true),
+			array('brian@websiteduck.com.', false),
+			array('brian@websiteduck.c', false),
+			array('brian@websiteduck.-com', false),
+			array('brian@website\'duck.com', false),
+			array('brian@duck.mu-seum', false),
+			array('brian@website+duck.com', false),
+			array('brian@\u008fwebsiteduck.com', false),
+			array('brian@websiteduck.com.,brian@websiteduck.c,brian@websiteduck.-com',false),
+			array('brian@websiteduck.com,brian@websiteduck.-com', false)
+		);
+		foreach ($test_data as $data_assert)
+		{
+			list($data, $assert) = $data_assert;
+			$this->assertEquals(IXT_Validation::email_list($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
 		}
 	}
 	
@@ -157,6 +185,45 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		{
 			list($data, $assert) = $data_assert;
 			$this->assertEquals(IXT_Validation::decimal($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
+		}
+	}
+	
+	public function testAlpha()
+	{
+		$test_data = array(
+			array('teststring', true),
+			array('TeStStRiNg', true),
+			array('TestôString', false),
+			array('Test String', false),
+			array('Test_String', false),
+			array('Test\\String', false),
+			array('TestString.', false),
+			array('1', false)
+		);
+		foreach ($test_data as $data_assert)
+		{
+			list($data, $assert) = $data_assert;
+			$this->assertEquals(IXT_Validation::alpha($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
+		}
+	}
+	
+	public function testAlphanumeric()
+	{
+		$test_data = array(
+			array('teststring', true),
+			array('TeStStRiNg', true),
+			array('Test1String', true),
+			array('123', true),
+			array('TestôString', false),
+			array('Test String1', false),
+			array('Test_String', false),
+			array('Test\\String5', false),
+			array('TestString.', false)
+		);
+		foreach ($test_data as $data_assert)
+		{
+			list($data, $assert) = $data_assert;
+			$this->assertEquals(IXT_Validation::alphanumeric($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
 		}
 	}
 

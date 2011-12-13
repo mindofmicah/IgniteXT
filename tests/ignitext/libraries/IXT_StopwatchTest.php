@@ -2,6 +2,7 @@
 
 namespace Libraries;
 
+error_reporting(E_ALL ^ E_NOTICE);
 require_once dirname(__FILE__) . '/../../../ignitext/libraries/ixt_stopwatch.php';
 
 class IXT_StopwatchTest extends \PHPUnit_Framework_TestCase {
