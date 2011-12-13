@@ -226,5 +226,51 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 			$this->assertEquals(IXT_Validation::alphanumeric($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
 		}
 	}
+	
+	public function testGreater_Than()
+	{
+		$test_data = array(
+			array('5', '4', true),
+			array(5, 4, true),
+			array('9.01', 9, true),
+			array(1000000, '1', true),
+			array('1e2', '99', true),
+			array('0xFF', '254', true),
+			array(6.9, 7, false),
+			array('6.9', '7', false),
+			array('0', '1', false),
+			array('1e2', '100', false),
+			array('0xFF', '256', false),
+			array('NaN', 5, false)
+		);
+		foreach ($test_data as $data_assert)
+		{
+			list($data, $param, $assert) = $data_assert;
+			$this->assertEquals(IXT_Validation::greater_than($data,$param), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
+		}
+	}
+	
+	public function testLess_Than()
+	{
+		$test_data = array(
+			array('0xFF', '256', true),
+			array(6.9, 7, true),
+			array('6.9', '7', true),
+			array('0', '1', true),
+			array('5', '4', false),
+			array(5, 4, false),
+			array('9.01', 9, false),
+			array(1000000, '1', false),
+			array('1e2', '99', false),
+			array('0xFF', '254', false),
+			array('1e2', '100', false),
+			array('NaN', 5, false)
+		);
+		foreach ($test_data as $data_assert)
+		{
+			list($data, $param, $assert) = $data_assert;
+			$this->assertEquals(IXT_Validation::less_than($data,$param), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
+		}
+	}
 
 }

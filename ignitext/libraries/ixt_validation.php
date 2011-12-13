@@ -144,6 +144,40 @@ class IXT_Validation
 		else return false;
 	}
 	
+	/**
+	 * Input must be greater than the specified number
+	 * 
+	 * @param string $input
+	 * @param integer $greater_than
+	 * @param boolean $return_error_message
+	 * @return mixed $valid
+	 */
+	function greater_than($input, $greater_than, $return_error_message = false)
+	{
+		$numeric = self::numeric($input);
+		if ($numeric !== true) return $numeric;
+		if ($input>$greater_than) return true;
+		else if ($return_error_message == true)	return 'must be greater than ' . $greater_than . '.';
+		else return false;
+	}
+	
+	/**
+	 * Input must be less than the specified number
+	 * 
+	 * @param string $input
+	 * @param integer $less_than
+	 * @param boolean $return_error_message
+	 * @return mixed $valid
+	 */
+	function less_than($input, $less_than, $return_error_message = false)
+	{
+		$numeric = self::numeric($input);
+		if ($numeric !== true) return $numeric;
+		if ($input<$less_than) return true;
+		else if ($return_error_message == true)	return 'must be less than ' . $less_than . '.';
+		else return false;
+	}
+	
 }
 
 ?>

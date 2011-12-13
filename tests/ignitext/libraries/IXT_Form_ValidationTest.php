@@ -109,13 +109,13 @@ class IXT_Form_ValidationTest extends \PHPUnit_Framework_TestCase {
 		$input_array = array(
 			'name' => 'Brian',
 			'email' => 'brian@websiteduck.com',
-			'number' => array('123', '9.9')
+			'number' => array('123', '4.9')
 		);
 		$rules_array = array(
 			array('name', 'Name', 'required'),
 			array('email', 'Email', 'required|email'),
 			array('number[0]', 'Number1', 'required|integer'),
-			array('number[1]', 'Number2', 'required|decimal')
+			array('number[1]', 'Number2', 'required|decimal|greater_than[4]')
 		);
 		$this->form->set_rules($rules_array);
 		$form_valid = $this->form->validate($input_array);
