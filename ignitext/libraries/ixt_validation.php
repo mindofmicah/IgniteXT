@@ -3,6 +3,15 @@
  * IXT Validation Library
  * 
  * Functions to validate data.
+ * 
+ * alphanumeric - must be an alphanumeric string.
+ * decimal - must be decimal or integer.
+ * email - must be a valid e-mail address.
+ * email_list - must contain a comma separated list of valid e-mail addresses.
+ * integer - must be an integer.  String must contain only numbers and leading zeros are not permitted.
+ * numeric - must be numeric.  "+0123.45e6" and "0xFF" are considered numeric.
+ * required - cannot be unset, null, or an empty string.
+ * 
  */
 namespace Libraries;
 class IXT_Validation
@@ -14,7 +23,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	public function required($input, $return_error_message = false)
+	function required($input, $return_error_message = false)
 	{
 		if (isset($input) && $input !== '') return true;
 		else if ($return_error_message == true) return 'is required.';
@@ -28,7 +37,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	public function email($input, $return_error_message = false)
+	function email($input, $return_error_message = false)
 	{
 		//Regular Expression taken from Jonathan Gotti's EasyMail (http://jgotti.net)
 		$valid = preg_match('/^(?:(?:(?:[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]|\x5c(?=[@,"\[\]' . 
@@ -45,6 +54,26 @@ class IXT_Validation
 	}
 	
 	/**
+	 * Input must contain a comma separated list of valid e-mail addresses.
+	 * 
+	 * @param string $input
+	 * @param boolean $return_error_message
+	 * @return mixed $valid
+	 */
+	function email_list($input, $return_error_message = false)
+	{
+		$emails = explode(',', $input);
+		
+		$valid = true;
+		foreach ($emails as $email)	
+			if (self::email($email) !== true) { $valid = false; break; }
+			
+		if ($valid) return true;
+		else if ($return_error_message == true) return 'must contain a comma separated list of valid e-mail addresses.';
+		else return false;
+	}
+	
+	/**
 	 * Input must be an integer.  String must contain only numbers and leading zeros are not permitted.
 	 * Integer input is also allowed.
 	 * 
@@ -52,7 +81,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	public function integer($input, $return_error_message = false)
+	function integer($input, $return_error_message = false)
 	{
 		if ($input === (string)(int)$input || $input === (int)$input) return true;
 		else if ($return_error_message == true) return 'must be an integer.';
@@ -66,7 +95,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	public function numeric($input, $return_error_message = false)
+	function numeric($input, $return_error_message = false)
 	{
 		if (is_numeric($input)) return true;
 		else if ($return_error_message == true) return 'must be a number.';
@@ -80,10 +109,38 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	public function decimal($input, $return_error_message = false)
+	function decimal($input, $return_error_message = false)
 	{
 		if (preg_match("/^[-+]?[0-9]*\.?[0-9]+$/", $input)) return true;
 		else if ($return_error_message == true) return 'must be a decimal number.';
+		else return false;
+	}
+	
+	/**
+	 * Input must be an alphanumeric string.
+	 * 
+	 * @param string $input
+	 * @param boolean $return_error_message
+	 * @return mixed $valid
+	 */
+	function alphanumeric($input, $return_error_message = false)
+	{
+		if (preg_match("/^[a-zA-Z0-9]*$/", $input)) return true;
+		else if ($return_error_message == true) return 'must be an alphanumeric string.';
+		else return false;
+	}
+	
+	/**
+	 * Input must contain only letters.
+	 * 
+	 * @param string $input
+	 * @param boolean $return_error_message
+	 * @return mixed $valid
+	 */
+	function alpha($input, $return_error_message = false)
+	{
+		if (preg_match("/^[a-zA-Z]*$/", $input)) return true;
+		else if ($return_error_message == true) return 'must contain only letters.';
 		else return false;
 	}
 	

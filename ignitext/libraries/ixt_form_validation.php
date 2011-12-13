@@ -1,177 +1,209 @@
 <?php
 /**
- * IXT Form Library
+ * IXT Form Validation Library
  * 
  * Validates user input. Can also set form values when validation fails and display
- * error messages either in a block or individually.
- * 
- * TODO: Support multidimensional arrays.
+ * error messages either in a block or individually. 
  * 
  */
 namespace Libraries;
 class IXT_Form_Validation
 {
+	private $array = array();
 	private $rules = array();
 	private $errors = array();
 	private $checked = false;
-	private $valid = true;
+	private $valid = false;
 	private $rule_class;
 	
 	private $pre_delim;
 	private $post_delim;
 	
-	public function is_valid() { return $this->valid; }
-	public function is_checked() { return $this->checked; }
+	function valid() { return $this->valid; }
+	function checked() { return $this->checked; }
+	function checked_valid() { return ($this->checked && $this->valid); }
+	function checked_invalid() { return ($this->checked && !$this->valid); }
 
-	public function set_rules($rules) { $this->rules = $rules; }
-	public function add_rules($rules) { $this->rules = array_merge($this->rules, $rules); }
-	public function clear_rules() { $this->rules = array(); }
+	function clear_rules() { $this->rules = array(); }
+	function get_rules() { return $this->rules; }
 
-	public function set_error($key, $message) { $this->errors[$key] = $message; $this->valid = false; }
-	public function clear_errors() { $this->errors = array(); $this->valid = true; }
+	function set_error($key, $message) { $this->errors[$key] = $message; $this->valid = false; }
+	function clear_errors() { $this->errors = array(); }
 
-	public function set_delim($pre_delim,$post_delim) { $this->pre_delim = $pre_delim; $this->post_delim = $post_delim; }
+	function set_delim($pre_delim, $post_delim) { $this->pre_delim = $pre_delim; $this->post_delim = $post_delim; }
 
 	public function __construct($rule_class = null)
 	{
-		if ($rule_class == null) $rule_class = new \Libraries\IXT_Validation();
-		else $this->rule_class = $rule_class;
+		if ($rule_class == null) $this->rule_class = new \Libraries\IXT_Validation;
+		else $this->rule_class = new $rule_class;
+	}
+	
+	/**
+	 * Takes the rules array and puts it into the format that I want.
+	 * 
+	 * In: array('name', 'label', 'rule,list')
+	 * Out: 'name' => array( 'label' => 'label', 'rules' => 'rule,list' )
+	 * 
+	 * @param array $rules
+	 */
+	function set_rules($rules)
+	{
+		$this->rules = array();
+		$this->add_rules($rules);
+	}
+	
+	/**
+	 * Same as set_rules but doesn't clear the rule array
+	 * 
+	 * @param type $rules 
+	 */
+	function add_rules($rules)
+	{
+		foreach ($rules as $rule)	
+			$this->rules[ $rule[0] ] = array('label' => $rule[1], 'rules' => $rule[2]);
 	}
 	
 	/**
 	 * Uses the rules that were previously set to run validation on a given array.
 	 * 
-	 * @param array $form The array to validate. This will usually be $_GET or $_POST
+	 * @param array $array The array to validate. This will usually be $_GET or $_POST
 	 * @return boolean $valid
 	 */
-	public function validate($form)
+	function validate($array)
 	{
+		$this->array = $array;
 		$this->valid = true;
 		foreach ($this->rules as $key => $info)
 		{
-			list($name,$rule_list) = $info;
-			$rule_array = explode(',',$rule_list);
-			$value = $this->get_value($form, $key);
+			if (is_array($info) === false) throw new Exception('Invalid rule array.  Please make sure array is in this format: array( array("fieldname", "Field Label", "comma,separated,rule,list"),... )');
+			$label = $info['label'];
+			$rule_list = $info['rules'];
+			$value = $this->get_value($key);
+			
+			if ($rule_list=='') continue;
+			$rule_array = explode('|', $rule_list);
+			
 			foreach ($rule_array as $rule) 
 			{
-				$output = $this->$rule_functions[$rule]($value);
-				if ($output !== true) $this->errors[$key] = str_replace('%name%',$name);
+				if ($rule != 'required' && $value == '') continue;
+				list($rule, $parameters) = $this->rule_parts($rule);
+				$rule_class = $this->rule_class;
+				array_unshift($parameters,$value);
+				array_push($parameters,true);
+				$output = call_user_func_array(array($rule_class,$rule),$parameters);
+				if ($output !== true) $this->errors[$key] = 'The ' . $label . ' field' . $output;
 			}
 		}
 		if (count($this->errors) > 0) $this->valid = false;
 		$this->checked = true;
 		return $this->valid;
 	}
+	
+	function rule_parts($rule)
+	{
+		if (strpos($rule,'['))
+		{
+			if (substr($rule, -1) != ']') throw new Exception('Invalid rule parameter format.  Please make sure rule is in this format: rule[1,2]');
+			$rule_parts = explode('[', $rule);
+			list($rule,$parameters) = $rule_parts;
+			$parameters = substr($parameters, 0, -1);
+			$parameters = explode(',',$parameters);
+		}
+		else
+		{
+			$parameters = array();
+		}
+		return array($rule, $parameters);
+	}
 
 	/**
 	 * This function returns the value of an array using a string like so:
-	 * 'person' -> $form['person']
-	 * This function will be more complicated when implementing multidimensional arrays:
-	 * 'people[5]' -> $form['people'][5]
+	 * 'person' -> $array['person']
+	 * 'people[5]' -> $array['people'][5]
 	 * 
-	 * @param array $form
+	 * @param array $array
 	 * @param string $key
 	 * @return string $value
 	 */
-	public function get_value($form, $key)
+	function get_value($key)
 	{
-		return $form[$key];
+		if (strpos($key, '[') !== false)
+		{
+			if (substr($key, -1) != ']') return false;
+			$key_parts = explode('[', $key);
+			$array1 = $key_parts[0];
+			$array2 = $key_parts[1];
+			$array2 = substr($array2, 0, -1);
+			if (isset($this->array[$array1][$array2])) return $this->array[$array1][$array2];
+		}
+		else if (isset($this->array[$key])) return $this->array[$key];
+		else return '';
 	}
 	
-	public function get_error($key)
+	/**
+	 * Gets the error message for a single field.  The message is wrapped in delimiters.
+	 * 
+	 * @param string $key
+	 * @return string $error_message
+	 */
+	function get_error($key)
 	{
-		if ($this->checked==false) return '';
 		if (!isset($this->errors[$key])) return '';
 		else return $this->pre_delim . $this->errors[$key] . $this->post_delim;
 	}
 
-	public function get_all_errors($separator = '<br />')
-	{
-		if ($this->checked==false) return '';
-		$error_string = implode($separator, $this->errors);
-		return $this->pre_delim . $error_string . $this->post_delim;
-	}
-
-	public function get_all_errors_delim($separator = '')
-	{
-		if ($this->checked==false) return '';
+	/**
+	 * Gets all of the error messages in a string. Each individual error message is wrapped in delimeters.
+	 * You can optionally specify a separator that will be inserted between error messages (e.g. <br />)
+	 * 
+	 * @param string $separator
+	 * @return string $error_message
+	 */
+	function get_errors($separator = '')
+	{		
 		$error_string = implode($this->post_delim . $separator . $this->pre_delim, $this->errors);
 		return $this->pre_delim . $error_string . $this->post_delim;
 	}
 
-	public function get_value($key)
+	/**
+	 * Returns the form input value that was submitted for the specified key.
+	 * 
+	 * @param string $key
+	 * @return string $value
+	 */
+	function form_value($key, $default='')
 	{
-		if (!$this->_isset($key)) return '';
-		else
-		{
-			$post =& $this->__post($key);
-			return htmlentities($post,ENT_QUOTES);
-		}
+		if ($this->checked == false) return $default;
+		return htmlentities($this->getValue($key), ENT_QUOTES);
 	}
 
-	function get_select($key,$value)
+	/**
+	 * Returns the text need to select a dropdown item if the specified key/value pair is selected.
+	 * 
+	 * @param string $key
+	 * @param string $value
+	 * @return string $select_text
+	 */
+	function form_select($key, $value, $default = false)
 	{
-		if (!$this->__isset($key)) return '';
-		else
-		{
-			$post =& $this->__post($key);
-			if ($post==$value) return 'selected="selected"';
-		}
+		if ($this->checked == false && $default == true) return 'selected="selected"';
+		$field = $this->get_value($key);
+		if ($field == $value) return 'selected="selected"';
+		else return '';
 	}
-
-	function _required($key)
+	
+	/**
+	 * Returns the text need to select a checkbox or radio if the specified key/value pair is selected.
+	 * 
+	 * @param string $key
+	 * @param string $value
+	 * @return string $check_text
+	 */
+	function form_check($key, $value, $default = false)
 	{
-		if (!$this->__isset($key)) return false;
-
-		$post =& $this->__post($key);
-		if ($post!='') return true;
-
-		$this->errors[$key] = 'The ' . $this->rules[$key][0] . ' field is required.';
-		return false;
-	}
-
-	function _email($key)
-	{
-		if (!$this->_required($key)) return false;
-		if (!$this->__isset($key)) return false;
-
-		$post =& $this->__post($key);
-		if (preg_match('/^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$/',$post)) return true;
-
-		$this->errors[$key] = 'The ' . $this->rules[$key][0] . ' field must contain a valid e-mail address.';
-		return false;
-	}
-
-	function _numeric($key)
-	{
-		if (!$this->__isset($key)) return false;
-		$post =& $this->__post($key);
-		if (is_numeric($post)) return true;
-		return false;
-	}
-
-	function __isset($key)
-	{
-		if (strpos($key, '[') !== FALSE && preg_match('/(.*?)\[(.*?)\]/', $key, $matches))
-		{
-			if (isset($_POST[$matches[1]][$matches[2]])) return true;
-		}
-		else
-		{
-			if (isset($_POST[$key])) return true;
-		}
-		return false;
-	}
-
-	function &__post($key)
-	{
-		if (strpos($key, '[') !== FALSE && preg_match('/(.*?)\[(.*?)\]/', $key, $matches))
-		{
-			if (isset($_POST[$matches[1]][$matches[2]])) return $_POST[$matches[1]][$matches[2]];
-		}
-		else
-		{
-			if (isset($_POST[$key])) return $_POST[$key];
-		}
+		if ($this->checked == false && $default == true) return 'checked="checked"';
+		$field = $this->get_value($key);
+		if ($field == $value) return 'checked="checked"';
+		else return '';
 	}
 }
