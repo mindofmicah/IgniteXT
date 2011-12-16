@@ -131,6 +131,20 @@ class IXT_Validation
 	}
 	
 	/**
+	 * Input must be a string containing only alphanumeric characters, dashes, or underscores.
+	 * 
+	 * @param string $input
+	 * @param boolean $return_error_message
+	 * @return mixed $valid
+	 */
+	function alphadash($input, $return_error_message = false)
+	{
+		if (preg_match("/^[0-9a-zA-Z\_\-]*$/", $input)) return true;
+		else if ($return_error_message == true) return 'must contain only alphanumeric characters, underscores, or dashes.';
+		else return false;
+	}
+	
+	/**
 	 * Input must contain only letters.
 	 * 
 	 * @param string $input
