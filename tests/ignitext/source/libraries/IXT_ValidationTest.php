@@ -2,7 +2,7 @@
 namespace Libraries;
 
 error_reporting(E_ALL ^ E_NOTICE);
-require_once dirname(__FILE__) . '/../../../ignitext/source/libraries/ixt_validation.php';
+require_once dirname(__FILE__) . '/../../../../ignitext/source/libraries/ixt_validation.php';
 
 class IXT_ValidationTest extends \PHPUnit_Framework_TestCase 
 {
@@ -195,6 +195,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 			array('TeStStRiNg', true),
 			array('TestôString', false),
 			array('Test String', false),
+			array('Test-String', false),
 			array('Test_String', false),
 			array('Test\\String', false),
 			array('TestString.', false),
@@ -216,6 +217,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 			array('123', true),
 			array('TestôString', false),
 			array('Test String1', false),
+			array('Test-String', false),
 			array('Test_String', false),
 			array('Test\\String5', false),
 			array('TestString.', false)
@@ -224,6 +226,27 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		{
 			list($data, $assert) = $data_assert;
 			$this->assertEquals(IXT_Validation::alphanumeric($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
+		}
+	}
+	
+	public function testAlphadash()
+	{
+		$test_data = array(
+			array('teststring', true),
+			array('TeStStRiNg', true),
+			array('Test1String', true),
+			array('123', true),
+			array('Test-String', true),
+			array('Test_String', true),
+			array('TestôString', false),
+			array('Test String1', false),
+			array('Test\\String5', false),
+			array('TestString.', false)
+		);
+		foreach ($test_data as $data_assert)
+		{
+			list($data, $assert) = $data_assert;
+			$this->assertEquals(IXT_Validation::alphadash($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
 		}
 	}
 	
