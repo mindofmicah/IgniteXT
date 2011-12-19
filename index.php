@@ -32,9 +32,13 @@ elseif (file_exists(SHRDIR . 'system/autoload.php')) include SHRDIR . 'system/au
 elseif (file_exists(IXTDIR . 'system/autoload.php')) include IXTDIR . 'system/autoload.php';
 else throw new Exception('Autoloader not found.');
 
+\System\Event::event( \System\Event_Type::NORMAL, 'IgniteXT', 'Start Application', 'Application has started running.');
+
 session_start();
 
 $dirs = array(IXTDIR, SHRDIR, APPDIR);
 foreach ($dirs as $dir) foreach (glob($dir . 'config/*.php') as $config_file) include $config_file;
 
 \System\Router::route();
+
+\System\Event::event( \System\Event_Type::NORMAL, 'IgniteXT', 'Finish Application', 'Application has finished running.');
