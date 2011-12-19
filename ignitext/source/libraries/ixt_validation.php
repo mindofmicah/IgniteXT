@@ -170,7 +170,7 @@ class IXT_Validation
 	{
 		$numeric = self::numeric($input);
 		if ($numeric !== true) return $numeric;
-		if ($input>$greater_than) return true;
+		if ($input > $greater_than) return true;
 		else if ($return_error_message == true)	return 'must be greater than ' . $greater_than . '.';
 		else return false;
 	}
@@ -187,8 +187,26 @@ class IXT_Validation
 	{
 		$numeric = self::numeric($input);
 		if ($numeric !== true) return $numeric;
-		if ($input<$less_than) return true;
+		if ($input < $less_than) return true;
 		else if ($return_error_message == true)	return 'must be less than ' . $less_than . '.';
+		else return false;
+	}
+	
+	/**
+	 * Input must be numeric and greater than or equal to $from and less than or equal to $to.
+	 * 
+	 * @param string $input
+	 * @param integer $from
+	 * @param integer $to
+	 * @param boolean $return_error_message
+	 * @return mixed $valid
+	 */
+	function range($input, $from, $to, $return_error_message = false)
+	{
+		$numeric = self::numeric($input);
+		if ($numeric !== true) return $numeric;
+		if ($input >= $from && $input <= $to) return true;
+		else if ($return_error_message == true) return ' must be a number from ' . $from . ' to ' . $to . ' inclusive.';
 		else return false;
 	}
 	

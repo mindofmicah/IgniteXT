@@ -295,5 +295,25 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 			$this->assertEquals(IXT_Validation::less_than($data,$param), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
 		}
 	}
+	
+	public function testRange()
+	{
+		$test_data = array(
+			array('5', '1', '10', true),
+			array(7, 6, 8, true),
+			array('10', 9, 11, true),
+			array(7, '7', 7, true),
+			array('0xFF', '254', '256', true),
+			array('1e2', '99', '200', true),
+			array('1', '2', '2', false),
+			array(5000, 1, 10, false),
+			array('0xFF', 250, 254, false)
+		);
+		foreach ($test_data as $data_assert)
+		{
+			list($data, $from, $to, $assert) = $data_assert;
+			$this->assertEquals(IXT_Validation::range($data,$from,$to), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
+		}
+	}
 
 }
