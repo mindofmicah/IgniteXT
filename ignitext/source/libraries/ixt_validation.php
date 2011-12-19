@@ -8,8 +8,13 @@
  * decimal - must be decimal or integer.
  * email - must be a valid e-mail address.
  * email_list - must contain a comma separated list of valid e-mail addresses.
+ * greater_than - must be greater than the specified number.
  * integer - must be an integer.  String must contain only numbers and leading zeros are not permitted.
+ * less_than - must be less than the specified number.
+ * max_length - must be at most $length characters.
+ * min_length - must be at least $length characters.
  * numeric - must be numeric.  "+0123.45e6" and "0xFF" are considered numeric.
+ * range - must be numeric and greater than or equal to $from and less than or equal to $to.
  * required - cannot be unset, null, or an empty string.
  * 
  */
@@ -159,7 +164,7 @@ class IXT_Validation
 	}
 	
 	/**
-	 * Input must be greater than the specified number
+	 * Input must be greater than the specified number.
 	 * 
 	 * @param string $input
 	 * @param integer $greater_than
@@ -176,7 +181,7 @@ class IXT_Validation
 	}
 	
 	/**
-	 * Input must be less than the specified number
+	 * Input must be less than the specified number.
 	 * 
 	 * @param string $input
 	 * @param integer $less_than
@@ -207,6 +212,36 @@ class IXT_Validation
 		if ($numeric !== true) return $numeric;
 		if ($input >= $from && $input <= $to) return true;
 		else if ($return_error_message == true) return ' must be a number from ' . $from . ' to ' . $to . ' inclusive.';
+		else return false;
+	}
+	
+	/**
+	 * Input must be at least $length characters.
+	 * 
+	 * @param string $input
+	 * @param integer $length
+	 * @param boolean $return_error_message
+	 * @return mixed $valid
+	 */
+	function min_length($input, $length, $return_error_message = false)
+	{
+		if (strlen($input) >= $length) return true;
+		else if ($return_error_message == true) return ' must be at least ' . $length . ' characters.';
+		else return false;
+	}
+	
+	/**
+	 * Input must be at most $length characters.
+	 * 
+	 * @param string $input
+	 * @param integer $length
+	 * @param boolean $return_error_message
+	 * @return mixed $valid
+	 */
+	function max_length($input, $length, $return_error_message = false)
+	{
+		if (strlen($input) <= $length) return true;
+		else if ($return_error_message == true) return ' must be ' . $length . ' characters or less.';
 		else return false;
 	}
 	

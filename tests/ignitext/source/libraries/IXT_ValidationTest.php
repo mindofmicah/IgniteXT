@@ -269,7 +269,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $param, $assert) = $data_assert;
-			$this->assertEquals(IXT_Validation::greater_than($data,$param), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
+			$this->assertEquals(IXT_Validation::greater_than($data, $param), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
 		}
 	}
 	
@@ -292,7 +292,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $param, $assert) = $data_assert;
-			$this->assertEquals(IXT_Validation::less_than($data,$param), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
+			$this->assertEquals(IXT_Validation::less_than($data, $param), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
 		}
 	}
 	
@@ -312,8 +312,44 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $from, $to, $assert) = $data_assert;
-			$this->assertEquals(IXT_Validation::range($data,$from,$to), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
+			$this->assertEquals(IXT_Validation::range($data, $from, $to), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
+		}
+	}
+	
+	public function testMinLength()
+	{
+		$test_data = array(
+			array('test', 3, true),
+			array('test', 4, true),
+			array('test', 5, false),
+			array(null, 1, false),
+			array(5, 0, true),
+			array(5, 1, true),
+			array(5, 2, false)
+		);
+		foreach ($test_data as $data_assert)
+		{
+			list($data, $length, $assert) = $data_assert;
+			$this->assertEquals(IXT_Validation::min_length($data, $length), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
 		}
 	}
 
+	public function testMaxLength()
+	{
+		$test_data = array(
+			array('test', 3, false),
+			array('test', 4, true),
+			array('test', 5, true),
+			array(null, 1, true),
+			array(5, 0, false),
+			array(5, 1, true),
+			array(5, 2, true)
+		);
+		foreach ($test_data as $data_assert)
+		{
+			list($data, $length, $assert) = $data_assert;
+			$this->assertEquals(IXT_Validation::max_length($data, $length), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
+		}
+	}
+	
 }
