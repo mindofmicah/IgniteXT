@@ -34,9 +34,14 @@ class Database
 	 * @param string $username
 	 * @param string $password
 	 */
-	public static function connect_dsn($identifier, $dsn, $username, $password)
+	public static function connect_dsn($identifier, $dsn, $username = null, $password = null)
 	{
-		self::$PDO_connections[$identifier] = new \PDO($dsn, $username, $password);
+		if ($username != null && $password != null)
+			self::$PDO_connections[$identifier] = new \PDO($dsn, $username, $password);
+		else if ($username != null)
+			self::$PDO_connections[$identifier] = new \PDO($dsn, $username);
+		else
+			self::$PDO_connections[$identifier] = new \PDO($dsn);
 		if (count(self::$PDO_connections) == 1) self::$selected_connection = $identifier;
 	}
 	
