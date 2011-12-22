@@ -174,7 +174,7 @@ class IXT_Form_Validation
 	function form_value($key, $default='')
 	{
 		if ($this->checked == false) return $default;
-		return htmlentities($this->getValue($key), ENT_QUOTES);
+		return htmlentities($this->get_value($key), ENT_QUOTES);
 	}
 
 	/**
