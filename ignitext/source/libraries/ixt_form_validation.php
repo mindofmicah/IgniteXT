@@ -91,7 +91,7 @@ class IXT_Form_Validation
 				array_unshift($parameters,$value);
 				array_push($parameters,true);
 				$output = call_user_func_array(array($rule_class,$rule),$parameters);
-				if ($output !== true) $this->errors[$key] = 'The ' . $label . ' field' . $output;
+				if ($output !== true) $this->errors[$key] = 'The ' . $label . ' field ' . $output;
 			}
 		}
 		if (count($this->errors) > 0) $this->valid = false;
