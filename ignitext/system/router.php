@@ -107,7 +107,7 @@ class Router {
 				if (file_exists($current_dir . $url_piece . '.php'))
 				{
 					$controller_map->dir = $current_dir;
-					$controller_map->file = $route_piece . '.php';
+					$controller_map->file = $url_piece . '.php';
 					$controller_map->namespace = $namespace;
 					$controller_map->package = $package;
 					$controller_map->controller = $url_piece;
