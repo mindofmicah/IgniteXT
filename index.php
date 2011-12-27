@@ -42,20 +42,25 @@ define('APPID', 'my_application');
 include BASEDIR . 'php_settings.php';
 
 /**
- * Find and include the autoloader. 
+ * Find and require the autoloader. 
  */
 if (file_exists(APPDIR . 'system/autoload.php')) require APPDIR . 'system/autoload.php';
 elseif (file_exists(SHRDIR . 'system/autoload.php')) require SHRDIR . 'system/autoload.php';
 elseif (file_exists(IXTDIR . 'system/autoload.php')) require IXTDIR . 'system/autoload.php';
 else throw new Exception('Autoloader not found.');
 
-\System\Event::event( \System\Event_Type::NORMAL, 'IgniteXT', 'Start Application', 'Application has started running.');
-
 session_start();
 
+/**
+ * Load all of the config files. 
+ */
 $dirs = array(IXTDIR, SHRDIR, APPDIR);
 foreach ($dirs as $dir) foreach (glob($dir . 'config/*.php') as $config_file) include $config_file;
 
+/**
+ * Run the application by starting the route which will call the appropriate controller.
+ */
+\System\Event::event( \System\Event_Type::NORMAL, 'IgniteXT', 'Start Application', 'Application has started running.');
 \System\Router::route();
-
 \System\Event::event( \System\Event_Type::NORMAL, 'IgniteXT', 'Finish Application', 'Application has finished running.');
+\System\Event::display();
