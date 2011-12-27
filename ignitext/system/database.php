@@ -9,7 +9,8 @@ class Database
 {
 	private static $PDO_connections = array();
 	private static $selected_connection = '';
-	private static $log_events = false;
+	
+	public static $log_events = false;
 	
 	/**
 	 * Connects to a database server and stores the connection in $PDO_connections.
@@ -100,7 +101,7 @@ class Database
 			$time1 = microtime(true);
 			$sth->execute($arguments);
 			$time2 = microtime(true);
-			\System\Event::event( \System\Event_Type::NORMAL, 'System\\Database', 'query', $sth->queryString . '(t:' . round($time2-$time1,6) . 's)');
+			\System\Event::event( \System\Event_Type::NORMAL, 'System\\Database', 'query', $sth->queryString . '(t:' . number_format($time2-$time1,6) . 's)');
 		}
 		else $sth->execute($arguments);
 		return $sth;
