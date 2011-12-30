@@ -38,12 +38,26 @@ class Event
 				'action' => $action, 
 				'description' => $description
 			);
+			if ($type == Event_Type::ON_FIRE) { self::display(); die(); }
 		}
 	}
 	
 	function display()
 	{
 		?>
+		<br style="clear: both;" />
+		<style type="text/css">
+			#ixt_events { border-collapse: collapse; }
+			#ixt_events td, #ixt_events th { padding: 5px; }
+			#ixt_events th { border: 1px solid #DDD; background-color: #EEE; }
+			#ixt_events td { border: 1px solid #EEE; }
+			#ixt_events td.type { width: 32px; }
+			#ixt_events td.normal { border: 1px solid #7E6; background-color: #7E6; }
+			#ixt_events td.notice { border: 1px solid #6BE; background-color: #6BE; }
+			#ixt_events td.warning { border: 1px solid #FF0; background-color: #FF0; }
+			#ixt_events td.error { border: 1px solid #F00; background-color: #F00; }
+			#ixt_events td.on_fire { border: 1px solid #000; background-color: #000; text-shadow: 0 -2px 1px #FF0, 0 -4px 1px #FD0, 0 -6px 1px #FB0, 0 -8px 2px #F90, 0 -10px 2px #F70; font-weight: bold; font-size: 17px; text-align: center; }
+		</style>
 		<table id="ixt_events">
 			<tr>
 				<th>&nbsp;</th>
@@ -53,9 +67,9 @@ class Event
 				<th>Description</th>
 			</tr>
 			<? foreach (self::$log as $log): ?>
-			<? $type = \System\Event_Type::get_type($log['type']); ?>
+			<? $type = Event_Type::get_type($log['type']); ?>
 				<tr>
-					<td><img src="<?=BASEURL?>assets/ixt/images/event_<?=strtolower($type)?>.png" alt="<?=$type?>"></td>
+					<td class="type <?=strtolower($type)?>"><?=$type=='ON_FIRE'?'&otimes;':'&nbsp;'?></td>
 					<td><?=number_format($log['time'],6)?>s</td>
 					<td><?=$log['from']?></td>
 					<td><?=$log['action']?></td>
