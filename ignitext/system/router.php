@@ -111,7 +111,7 @@ class Router {
 					$controller_map->namespace = $namespace;
 					$controller_map->package = $package;
 					$controller_map->controller = $url_piece;
-					$controller_map->action = self::get_action($url_parts_copy);
+					$controller_map->action = self::get_action($controller_map, $url_parts_copy);
 					$controller_map->leftovers = $url_parts_copy;
 					return $controller_map;
 				}
@@ -142,7 +142,7 @@ class Router {
 				$controller_map->namespace = $last_good_dir['namespace'];
 				$controller_map->package = $package;
 				$controller_map->controller = 'index';
-				$controller_map->action = self::get_action($last_good_dir['leftovers']);
+				$controller_map->action = self::get_action($controller_map, $last_good_dir['leftovers']);
 				$controller_map->leftovers = $last_good_dir['leftovers'];
 				return $controller_map;
 			}
@@ -151,12 +151,15 @@ class Router {
 		return false;
 	}
 
-	private function get_action(&$route_parts)
+	private function get_action($controller_map, &$route_parts)
 	{
-		if (count($route_parts) % 2 == 1 && $route_parts[0] != '')
+		if (!is_array($route_parts) || count($route_parts) == 0) return 'index';
+		
+		if (method_exists($controller_map->fully_qualified_class, $route_parts[0]))
 			$action = array_shift($route_parts);
 		else 
 			$action = 'index';
+			
 		return $action;
 	}
 	
