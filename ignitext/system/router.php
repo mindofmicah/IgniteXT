@@ -157,6 +157,8 @@ class Router {
 		
 		if (method_exists($controller_map->fully_qualified_class, $route_parts[0]))
 			$action = array_shift($route_parts);
+		else if (method_exists($controller_map->fully_qualified_class, 'm_' . $route_parts[0]))
+			$action = 'm_' . array_shift($route_parts);
 		else 
 			$action = 'index';
 			
