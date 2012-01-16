@@ -210,6 +210,20 @@ class Database
 		$sth = call_user_func_array('self::query', $arguments);
 		return $sth->fetchColumn();
 	}
+
+	/**
+	 * Execute a query and return an array the first field that was selected for each row (select only one field)
+	 * 
+	 * @param string $query
+	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
+	 * @return array $fields
+	 */
+	public static function fields()
+	{
+		$arguments = func_get_args();
+		$sth = call_user_func_array('self::query', $arguments);
+		return $sth->fetchAll(\PDO::FETCH_COLUMN);
+	}
 	
 	/**
 	 * Execute a query and return the insert id
