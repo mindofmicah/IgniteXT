@@ -211,6 +211,12 @@ class Database
 		return $sth->fetchColumn();
 	}
 
+
+
+
+
+
+
 	/**
 	 * Execute a query and return an array the first field that was selected for each row (select only one field)
 	 * 
