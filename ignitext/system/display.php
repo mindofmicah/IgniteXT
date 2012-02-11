@@ -1,11 +1,11 @@
 <?php
 /**
- * This class contains functions to display views and templates.  Primarily used by a controller class.
+ * IgniteXT Display
  */
 namespace System;
 class Display
 {
-	public static function view($file,$data=null)
+	public static function view($file, &$data = null)
 	{
 		$requested_file = $file;
 		if (is_array($data)) extract($data);
@@ -24,7 +24,7 @@ class Display
 		echo "View Not Found: " . $requested_file . ".php"; die();
 	}
 
-	public static function return_view($file,$data=null)
+	public static function return_view($file, &$data = null)
 	{
 		ob_start();
 		self::view($file,$data);
@@ -33,7 +33,7 @@ class Display
 		return $ret;
 	}
 	
-	public static function template_view($file,$data)
+	public static function template_view($file, &$data)
 	{
 		$requested_file = $file;
 		if (is_array($data)) extract($data);
@@ -45,10 +45,12 @@ class Display
 		echo "Template View Not Found: " . $requested_file . ".php"; die();
 	}
 
-	public static function template($title,$file,$data=null,$template='main')
+	public static function template($files, &$data=null, $template = 'main')
 	{
-		$data['content_title'] = $title;
-		$data['content_view'] = $file;
+		$content = '';
+		if (!is_array($files)) $files = array($files);
+		foreach ($files as $file) $content .= self::return_view($file, $data);
+		$data['content'] = $content;
 		self::template_view($template, $data);
 	}
 	
