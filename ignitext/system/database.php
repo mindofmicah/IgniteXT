@@ -212,17 +212,31 @@ class Database
 	}
 
 	/**
-	 * Execute a query and return an array the first field that was selected for each row (select only one field)
+	 * Execute a query and return an array of all fields in the first column of results
 	 * 
 	 * @param string $query
 	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
 	 * @return array $fields
 	 */
-	public static function fields()
+	public static function fields_col()
 	{
 		$arguments = func_get_args();
 		$sth = call_user_func_array('self::query', $arguments);
 		return $sth->fetchAll(\PDO::FETCH_COLUMN);
+	}
+	
+	/**
+	 * Execute a query and return an array of all fields in the first row of results
+	 * 
+	 * @param string $query
+	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
+	 * @return array $fields
+	*/
+	public static function fields_row()
+	{
+		$arguments = func_get_args();
+		$sth = call_user_func_array('self::query', $arguments);
+		return $sth->fetch(\PDO::FETCH_NUM);
 	}
 	
 	/**
