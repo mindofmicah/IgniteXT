@@ -18,7 +18,7 @@ class Event_Type
 	}
 }
 
-class Event
+class Profiler
 {
 	static $log_events = false;
 	static $display_log = false;

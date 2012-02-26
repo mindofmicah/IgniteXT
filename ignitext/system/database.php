@@ -101,7 +101,7 @@ class Database
 			$time1 = microtime(true);
 			$sth->execute($arguments);
 			$time2 = microtime(true);
-			\System\Event::event( \System\Event_Type::NORMAL, 'System\\Database', 'query', $sth->queryString . ' (t:' . number_format($time2-$time1,6) . 's)');
+			\System\Profiler::event( \System\Event_Type::NORMAL, 'System\\Database', 'query', $sth->queryString . ' (t:' . number_format($time2-$time1,6) . 's)');
 		}
 		else $sth->execute($arguments);
 		return $sth;

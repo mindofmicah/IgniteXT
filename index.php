@@ -60,7 +60,7 @@ foreach ($dirs as $dir) foreach (glob($dir . 'config/*.php') as $config_file) in
 /**
  * Run the application by starting the route which will call the appropriate controller.
  */
-\System\Event::event( \System\Event_Type::NORMAL, 'IgniteXT', 'Start Application', 'Application has started running.');
+\System\Profiler::event( \System\Event_Type::NORMAL, 'IgniteXT', 'Start Application', 'Application has started running.');
 \System\Router::route();
-\System\Event::event( \System\Event_Type::NORMAL, 'IgniteXT', 'Finish Application', 'Application has finished running.');
-\System\Event::display();
+\System\Profiler::event( \System\Event_Type::NORMAL, 'IgniteXT', 'Finish Application', 'Application has finished running.');
+\System\Profiler::display();
