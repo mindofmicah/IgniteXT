@@ -2,9 +2,16 @@
 /**
  * Database Manager
  * 
- * Manages connections and runs queries.  This class serves as a wrapper for PDO.
+ * Manages connections, runs queries, returns results.
+ * This class serves as a wrapper for PDO.
+ *
+ * @copyright  Copyright 2011-2012, Website Duck LLC (http://www.websiteduck.com)
+ * @link       http://www.ignitext.com IgniteXT PHP Framework
+ * @license    MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 namespace System;
+
 class Database
 {
 	private static $PDO_connections = array();

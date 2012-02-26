@@ -1,11 +1,19 @@
 <?php
 /**
- * The router uses a request variable to figure out which controller to load
- * and method to call.  It also creates GET variables using the extra non-route 
- * information.
+ * Router
+ * 
+ * Determines which controller to load and method to call based on the URL 
+ * entered.
+ *
+ * @copyright  Copyright 2011-2012, Website Duck LLC (http://www.websiteduck.com)
+ * @link       http://www.ignitext.com IgniteXT PHP Framework
+ * @license    MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 namespace System;
-class Router {
+
+class Router 
+{
 
 	public static $url_path;
 	public static $controller_map;

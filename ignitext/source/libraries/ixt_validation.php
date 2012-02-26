@@ -16,9 +16,14 @@
  * numeric - must be numeric.  "+0123.45e6" and "0xFF" are considered numeric.
  * range - must be numeric and greater than or equal to $from and less than or equal to $to.
  * required - cannot be unset, null, or an empty string.
- * 
+ *
+ * @copyright  Copyright 2011-2012, Website Duck LLC (http://www.websiteduck.com)
+ * @link       http://www.ignitext.com IgniteXT PHP Framework
+ * @license    MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 namespace Libraries;
+
 class IXT_Validation
 {
 	/**

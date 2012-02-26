@@ -1,7 +1,15 @@
 <?php
 /**
- * Event Log Class
+ * Profiler
+ * 
+ * Keeps track of things that happen during execution and how long those things
+ * took.  Used for debugging and logging purposes.
+ *
+ * @copyright  Copyright 2011-2012, Website Duck LLC (http://www.websiteduck.com)
+ * @link       http://www.ignitext.com IgniteXT PHP Framework
+ * @license    MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 namespace System;
 
 class Event_Type

@@ -2,11 +2,16 @@
 /**
  * IXT Form Validation Library
  * 
- * Validates user input. Can also set form values when validation fails and display
- * error messages either in a block or individually. 
- * 
+ * Validates user input. Can also set form values when validation fails and
+ * display error messages with custom delimiters.
+ *
+ * @copyright  Copyright 2011-2012, Website Duck LLC (http://www.websiteduck.com)
+ * @link       http://www.ignitext.com IgniteXT PHP Framework
+ * @license    MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 namespace Libraries;
+
 class IXT_Form_Validation
 {
 	private $array = array();

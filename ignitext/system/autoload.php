@@ -1,11 +1,18 @@
 <?php
-
 /**
- * Includes a PHP file that should contain the requested class.
+ * Autoloader
  * 
- * @param string $class
+ * Automatically loads a PHP file that contains the class requested by your
+ * application.
+ *
+ * @copyright  Copyright 2011-2012, Website Duck LLC (http://www.websiteduck.com)
+ * @link       http://www.ignitext.com IgniteXT PHP Framework
+ * @license    MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-function ignitext_autoload_source($class)
+
+namespace System;
+
+function autoload_source($class)
 {
 	$valid_types = array('models', 'controllers', 'libraries');
 
@@ -29,7 +36,7 @@ function ignitext_autoload_source($class)
 	}
 }
 
-function ignitext_autoload_package($class)
+function autoload_package($class)
 {
 	$valid_types = array('models', 'controllers', 'libraries');
 
@@ -56,7 +63,7 @@ function ignitext_autoload_package($class)
 	}
 }
 
-function ignitext_autoload_system($class)
+function autoload_system($class)
 {
 	$class = strtolower($class);
 	$parts = explode('\\', $class);
@@ -78,6 +85,6 @@ function ignitext_autoload_system($class)
 	}
 }
 
-spl_autoload_register('ignitext_autoload_source');
-spl_autoload_register('ignitext_autoload_package');
-spl_autoload_register('ignitext_autoload_system');
+spl_autoload_register('\System\autoload_source');
+spl_autoload_register('\System\autoload_package');
+spl_autoload_register('\System\autoload_system');

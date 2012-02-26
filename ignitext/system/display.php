@@ -1,8 +1,16 @@
 <?php
 /**
- * IgniteXT Display
+ * Display
+ * 
+ * Shows views and templates.
+ *
+ * @copyright  Copyright 2011-2012, Website Duck LLC (http://www.websiteduck.com)
+ * @link       http://www.ignitext.com IgniteXT PHP Framework
+ * @license    MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 namespace System;
+
 class Display
 {
 	public static function view($file, &$data = null)
