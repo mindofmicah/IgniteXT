@@ -55,6 +55,7 @@ elseif (file_exists(SHRDIR . 'system/autoload.php')) require SHRDIR . 'system/au
 elseif (file_exists(IXTDIR . 'system/autoload.php')) require IXTDIR . 'system/autoload.php';
 else throw new Exception('Autoloader not found.');
 
+\System\Profiler::start();
 session_start();
 
 /**
@@ -69,4 +70,3 @@ foreach ($dirs as $dir) foreach (glob($dir . 'config/*.php') as $config_file) in
 \System\Profiler::event( \System\Event_Type::NORMAL, 'IgniteXT', 'Start Application', 'Application has started running.');
 \System\Router::route();
 \System\Profiler::event( \System\Event_Type::NORMAL, 'IgniteXT', 'Finish Application', 'Application has finished running.');
-\System\Profiler::display();
