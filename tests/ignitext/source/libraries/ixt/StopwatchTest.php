@@ -1,17 +1,17 @@
 <?php
 
-namespace Libraries;
+namespace Libraries\IXT;
 
 error_reporting(E_ALL ^ E_NOTICE);
-require_once dirname(__FILE__) . '/../../../../ignitext/source/libraries/ixt_stopwatch.php';
+require_once dirname(__FILE__) . '/../../../../../ignitext/source/libraries/ixt/stopwatch.php';
 
-class IXT_StopwatchTest extends \PHPUnit_Framework_TestCase {
+class StopwatchTest extends \PHPUnit_Framework_TestCase {
 
 	protected $stopwatch;
 
 	protected function setUp() {
 		date_default_timezone_set('America/Chicago');
-		$this->stopwatch = new IXT_Stopwatch;
+		$this->stopwatch = new Stopwatch;
 	}
 
 	protected function tearDown() {	}

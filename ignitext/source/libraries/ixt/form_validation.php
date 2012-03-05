@@ -10,9 +10,9 @@
  * @license    MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-namespace Libraries;
+namespace Libraries\IXT;
 
-class IXT_Form_Validation
+class Form_Validation
 {
 	private $array = array();
 	private $rules = array();
@@ -39,7 +39,7 @@ class IXT_Form_Validation
 
 	public function __construct($rule_class = null)
 	{
-		if ($rule_class == null) $this->rule_class = new \Libraries\IXT_Validation;
+		if ($rule_class == null) $this->rule_class = new \Libraries\IXT\Validation;
 		else $this->rule_class = new $rule_class;
 	}
 	

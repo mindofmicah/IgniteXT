@@ -1,10 +1,10 @@
 <?php
-namespace Libraries;
+namespace Libraries\IXT;
 
 error_reporting(E_ALL ^ E_NOTICE);
-require_once dirname(__FILE__) . '/../../../../ignitext/source/libraries/ixt_validation.php';
+require_once dirname(__FILE__) . '/../../../../../ignitext/source/libraries/ixt/validation.php';
 
-class IXT_ValidationTest extends \PHPUnit_Framework_TestCase 
+class ValidationTest extends \PHPUnit_Framework_TestCase 
 {
 	protected function setUp() { }
 	protected function tearDown() {	}
@@ -21,7 +21,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $assert) = $data_assert;
-			$this->assertEquals(IXT_Validation::required($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
+			$this->assertEquals(Validation::required($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
 		}
 	}
 
@@ -46,7 +46,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $assert) = $data_assert;
-			$this->assertEquals(IXT_Validation::email($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
+			$this->assertEquals(Validation::email($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
 		}
 	}
 	
@@ -73,7 +73,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $assert) = $data_assert;
-			$this->assertEquals(IXT_Validation::email_list($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
+			$this->assertEquals(Validation::email_list($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
 		}
 	}
 	
@@ -110,7 +110,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $assert) = $data_assert;
-			$this->assertEquals(IXT_Validation::integer($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
+			$this->assertEquals(Validation::integer($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
 		}
 	}
 	
@@ -146,7 +146,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $assert) = $data_assert;
-			$this->assertEquals(IXT_Validation::numeric($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
+			$this->assertEquals(Validation::numeric($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
 		}
 	}
 	
@@ -184,7 +184,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $assert) = $data_assert;
-			$this->assertEquals(IXT_Validation::decimal($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
+			$this->assertEquals(Validation::decimal($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
 		}
 	}
 	
@@ -204,7 +204,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $assert) = $data_assert;
-			$this->assertEquals(IXT_Validation::alpha($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
+			$this->assertEquals(Validation::alpha($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
 		}
 	}
 	
@@ -225,7 +225,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $assert) = $data_assert;
-			$this->assertEquals(IXT_Validation::alphanumeric($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
+			$this->assertEquals(Validation::alphanumeric($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
 		}
 	}
 	
@@ -246,7 +246,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $assert) = $data_assert;
-			$this->assertEquals(IXT_Validation::alphadash($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
+			$this->assertEquals(Validation::alphadash($data), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data);
 		}
 	}
 	
@@ -269,7 +269,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $param, $assert) = $data_assert;
-			$this->assertEquals(IXT_Validation::greater_than($data, $param), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
+			$this->assertEquals(Validation::greater_than($data, $param), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
 		}
 	}
 	
@@ -292,7 +292,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $param, $assert) = $data_assert;
-			$this->assertEquals(IXT_Validation::less_than($data, $param), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
+			$this->assertEquals(Validation::less_than($data, $param), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
 		}
 	}
 	
@@ -312,7 +312,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $from, $to, $assert) = $data_assert;
-			$this->assertEquals(IXT_Validation::range($data, $from, $to), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
+			$this->assertEquals(Validation::range($data, $from, $to), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
 		}
 	}
 	
@@ -330,7 +330,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $length, $assert) = $data_assert;
-			$this->assertEquals(IXT_Validation::min_length($data, $length), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
+			$this->assertEquals(Validation::min_length($data, $length), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
 		}
 	}
 
@@ -348,7 +348,7 @@ class IXT_ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $length, $assert) = $data_assert;
-			$this->assertEquals(IXT_Validation::max_length($data, $length), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
+			$this->assertEquals(Validation::max_length($data, $length), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
 		}
 	}
 	

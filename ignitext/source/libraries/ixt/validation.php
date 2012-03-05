@@ -22,9 +22,9 @@
  * @license    MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-namespace Libraries;
+namespace Libraries\IXT;
 
-class IXT_Validation
+class Validation
 {
 	/**
 	 * Input cannot be unset, null, or an empty string.
@@ -33,7 +33,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	function required($input, $return_error_message = false)
+	public static function required($input, $return_error_message = false)
 	{
 		if (isset($input) && $input !== '') return true;
 		else if ($return_error_message == true) return 'is required.';
@@ -47,7 +47,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	function email($input, $return_error_message = false)
+	public static function email($input, $return_error_message = false)
 	{
 		//Regular Expression taken from Jonathan Gotti's EasyMail (http://jgotti.net)
 		$valid = preg_match('/^(?:(?:(?:[^@,"\[\]\x5c\x00-\x20\x7f-\xff\.]|\x5c(?=[@,"\[\]' . 
@@ -70,7 +70,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	function email_list($input, $return_error_message = false)
+	public static function email_list($input, $return_error_message = false)
 	{
 		$emails = explode(',', $input);
 		
@@ -91,7 +91,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	function integer($input, $return_error_message = false)
+	public static function integer($input, $return_error_message = false)
 	{
 		if ($input === (string)(int)$input || $input === (int)$input) return true;
 		else if ($return_error_message == true) return 'must be an integer.';
@@ -105,7 +105,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	function numeric($input, $return_error_message = false)
+	public static function numeric($input, $return_error_message = false)
 	{
 		if (is_numeric($input)) return true;
 		else if ($return_error_message == true) return 'must be a number.';
@@ -119,7 +119,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	function decimal($input, $return_error_message = false)
+	public static function decimal($input, $return_error_message = false)
 	{
 		if (preg_match("/^[-+]?[0-9]*\.?[0-9]+$/", $input)) return true;
 		else if ($return_error_message == true) return 'must be a decimal number.';
@@ -133,7 +133,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	function alphanumeric($input, $return_error_message = false)
+	public static function alphanumeric($input, $return_error_message = false)
 	{
 		if (preg_match("/^[a-zA-Z0-9]*$/", $input)) return true;
 		else if ($return_error_message == true) return 'must be an alphanumeric string.';
@@ -147,7 +147,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	function alphadash($input, $return_error_message = false)
+	public static function alphadash($input, $return_error_message = false)
 	{
 		if (preg_match("/^[0-9a-zA-Z\_\-]*$/", $input)) return true;
 		else if ($return_error_message == true) return 'must contain only alphanumeric characters, underscores, or dashes.';
@@ -161,7 +161,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	function alpha($input, $return_error_message = false)
+	public static function alpha($input, $return_error_message = false)
 	{
 		if (preg_match("/^[a-zA-Z]*$/", $input)) return true;
 		else if ($return_error_message == true) return 'must contain only letters.';
@@ -176,7 +176,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	function greater_than($input, $greater_than, $return_error_message = false)
+	public static function greater_than($input, $greater_than, $return_error_message = false)
 	{
 		$numeric = self::numeric($input);
 		if ($numeric !== true) return $numeric;
@@ -193,7 +193,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	function less_than($input, $less_than, $return_error_message = false)
+	public static function less_than($input, $less_than, $return_error_message = false)
 	{
 		$numeric = self::numeric($input);
 		if ($numeric !== true) return $numeric;
@@ -211,7 +211,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	function range($input, $from, $to, $return_error_message = false)
+	public static function range($input, $from, $to, $return_error_message = false)
 	{
 		$numeric = self::numeric($input);
 		if ($numeric !== true) return $numeric;
@@ -228,7 +228,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	function min_length($input, $length, $return_error_message = false)
+	public static function min_length($input, $length, $return_error_message = false)
 	{
 		if (strlen($input) >= $length) return true;
 		else if ($return_error_message == true) return ' must be at least ' . $length . ' characters.';
@@ -243,7 +243,7 @@ class IXT_Validation
 	 * @param boolean $return_error_message
 	 * @return mixed $valid
 	 */
-	function max_length($input, $length, $return_error_message = false)
+	public static function max_length($input, $length, $return_error_message = false)
 	{
 		if (strlen($input) <= $length) return true;
 		else if ($return_error_message == true) return ' must be ' . $length . ' characters or less.';

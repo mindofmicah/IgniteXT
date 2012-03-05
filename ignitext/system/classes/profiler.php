@@ -131,7 +131,7 @@ class Profiler
 			if (set_jquery_noconflict) jQuery.noConflict();
 			jQuery(function($) {
 				$.each(debug, function(index, value) {
-					alert(value.time + ' ' + value.type + ' ' + value.from + ' ' + value.action + ' ' + value.description);
+					//alert(value.time + ' ' + value.type + ' ' + value.from + ' ' + value.action + ' ' + value.description);
 				});					
 			});
 		</script>

@@ -9,9 +9,9 @@
  * @license    MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-namespace Libraries;
+namespace Libraries\IXT;
 
-class IXT_Stopwatch
+class Stopwatch
 {
 	private $marks = array();
 	public function get_marks() { return $this->marks; }
