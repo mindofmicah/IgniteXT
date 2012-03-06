@@ -142,7 +142,7 @@ class Router
 		//The controller file was not found, try index.php in the last good directories
 		foreach ($last_good_dirs as $last_good_dir)
 		{
-			if (file_exists($last_good_dir['path'] . 'index.php'))
+			if (file_exists($last_good_dir['dir'] . 'index.php'))
 			{
 				$controller_map = new \System\Controller_Map();
 				$controller_map->dir = $last_good_dir['dir'];
