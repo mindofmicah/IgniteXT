@@ -11,6 +11,6 @@
 
 namespace System\Classes;
 
-class Model 
+abstract class Model 
 {
 }

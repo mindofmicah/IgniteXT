@@ -12,10 +12,10 @@
 
 namespace System\Classes;
 
-class Database
+abstract class Database
 {
-	private static $PDO_connections = array();
-	private static $selected_connection = '';
+	protected static $PDO_connections = array();
+	protected static $selected_connection = '';
 	
 	public static $log_events = false;
 	
@@ -30,8 +30,8 @@ class Database
 	 */
 	public static function connect($identifier, $driver, $server, $username, $password, $database)
 	{
-		self::$PDO_connections[$identifier] = new \PDO($driver . ':host=' . $server . ';dbname=' . $database, $username, $password);
-		if (count(self::$PDO_connections) == 1) self::$selected_connection = $identifier;
+		static::$PDO_connections[$identifier] = new \PDO($driver . ':host=' . $server . ';dbname=' . $database, $username, $password);
+		if (count(static::$PDO_connections) == 1) static::$selected_connection = $identifier;
 	}
 	
 	/**
@@ -45,12 +45,12 @@ class Database
 	public static function connect_dsn($identifier, $dsn, $username = null, $password = null)
 	{
 		if ($username != null && $password != null)
-			self::$PDO_connections[$identifier] = new \PDO($dsn, $username, $password);
+			static::$PDO_connections[$identifier] = new \PDO($dsn, $username, $password);
 		else if ($username != null)
-			self::$PDO_connections[$identifier] = new \PDO($dsn, $username);
+			static::$PDO_connections[$identifier] = new \PDO($dsn, $username);
 		else
-			self::$PDO_connections[$identifier] = new \PDO($dsn);
-		if (count(self::$PDO_connections) == 1) self::$selected_connection = $identifier;
+			static::$PDO_connections[$identifier] = new \PDO($dsn);
+		if (count(static::$PDO_connections) == 1) static::$selected_connection = $identifier;
 	}
 	
 	/**
@@ -60,8 +60,8 @@ class Database
 	 */
 	public static function select_connection($identifier)
 	{
-		if (array_key_exists($identifier, self::$PDO_connections))
-			self::$selected_connection = $identifier;
+		if (array_key_exists($identifier, static::$PDO_connections))
+			static::$selected_connection = $identifier;
 		else
 			throw new Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to select.');
 	}
@@ -75,9 +75,9 @@ class Database
 	public static function get_pdo($identifier = null)
 	{
 		if ($identifier == null)
-			return self::$PDO_connections[self::$selected_connection];
-		else if (array_key_exists($identifier, self::$PDO_connections))
-			return self::$PDO_connections[$identifier];
+			return static::$PDO_connections[static::$selected_connection];
+		else if (array_key_exists($identifier, static::$PDO_connections))
+			return static::$PDO_connections[$identifier];
 		else 
 			throw new Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to get the PDO object for.');
 	}
@@ -87,7 +87,7 @@ class Database
 	 * 
 	 * @return string $identifier
 	 */
-	public static function selected_connection() { return self::$selected_connection; }
+	public static function selected_connection() { return static::$selected_connection; }
 	
 	/**
 	 * Execute a query, return a result
@@ -101,9 +101,9 @@ class Database
 		$arguments = func_get_args();
 		$query = array_shift($arguments);
 		if (count($arguments)==1 && is_array($arguments[0])) $arguments = $arguments[0];
-		$dbh = self::get_pdo();
+		$dbh = static::get_pdo();
 		$sth = $dbh->prepare($query);
-		if (self::$log_events)
+		if (static::$log_events)
 		{
 			$time1 = microtime(true);
 			$sth->execute($arguments);
@@ -124,7 +124,7 @@ class Database
 	public static function rows()
 	{
 		$arguments = func_get_args();
-		$sth = call_user_func_array('self::query', $arguments);
+		$sth = call_user_func_array('static::query', $arguments);
 		return $sth->fetchAll(\PDO::FETCH_OBJ);
 	}
 	
@@ -140,7 +140,7 @@ class Database
 	{
 		$arguments = func_get_args();
 		$class_name = array_shift($arguments);
-		$sth = call_user_func_array('self::query', $arguments);
+		$sth = call_user_func_array('static::query', $arguments);
 		return $sth->fetchAll(\PDO::FETCH_CLASS, $class_name);
 	}
 	
@@ -163,7 +163,7 @@ class Database
 		if (count($arguments) > 1) $key = array_shift($arguments);
 		else throw new Exception('The rows_key function requires at least 2 parameters: $key and $query.');
 				
-		$rows = call_user_func_array('self::rows', $arguments);
+		$rows = call_user_func_array('static::rows', $arguments);
 		if (array_key_exists($key,$rows[0]) == false) 
 			throw new Exception('The specified key does not exist in the result set.');
 		
@@ -183,7 +183,7 @@ class Database
 	public static function row()
 	{
 		$arguments = func_get_args();
-		$sth = call_user_func_array('self::query', $arguments);
+		$sth = call_user_func_array('static::query', $arguments);
 		return $sth->fetch(\PDO::FETCH_OBJ);
 	}
 	
@@ -199,7 +199,7 @@ class Database
 	{
 		$arguments = func_get_args();
 		$class_name = array_shift($arguments);
-		$sth = call_user_func_array('self::query', $arguments);
+		$sth = call_user_func_array('static::query', $arguments);
 		$sth->setFetchMode(\PDO::FETCH_CLASS, $class_name);
 		return $sth->fetch(\PDO::FETCH_CLASS);
 	}
@@ -214,7 +214,7 @@ class Database
 	public static function field()
 	{
 		$arguments = func_get_args();
-		$sth = call_user_func_array('self::query', $arguments);
+		$sth = call_user_func_array('static::query', $arguments);
 		return $sth->fetchColumn();
 	}
 
@@ -228,7 +228,7 @@ class Database
 	public static function fields_col()
 	{
 		$arguments = func_get_args();
-		$sth = call_user_func_array('self::query', $arguments);
+		$sth = call_user_func_array('static::query', $arguments);
 		return $sth->fetchAll(\PDO::FETCH_COLUMN);
 	}
 	
@@ -242,7 +242,7 @@ class Database
 	public static function fields_row()
 	{
 		$arguments = func_get_args();
-		$sth = call_user_func_array('self::query', $arguments);
+		$sth = call_user_func_array('static::query', $arguments);
 		return $sth->fetch(\PDO::FETCH_NUM);
 	}
 	
@@ -256,8 +256,8 @@ class Database
 	public static function insert()
 	{
 		$arguments = func_get_args();
-		$sth = call_user_func_array('self::query', $arguments);
-		$dbh = self::get_pdo();
+		$sth = call_user_func_array('static::query', $arguments);
+		$dbh = static::get_pdo();
 		return $dbh->lastInsertId();
 	}
 	

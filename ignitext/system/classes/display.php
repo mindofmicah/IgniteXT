@@ -11,7 +11,7 @@
 
 namespace System\Classes;
 
-class Display
+abstract class Display
 {
 	public static function view($file, &$data = null)
 	{
@@ -35,7 +35,7 @@ class Display
 	public static function return_view($file, &$data = null)
 	{
 		ob_start();
-		self::view($file,$data);
+		static::view($file,$data);
 		$ret = ob_get_contents();
 		ob_end_clean();
 		return $ret;
@@ -57,9 +57,9 @@ class Display
 	{
 		$content = '';
 		if (!is_array($files)) $files = array($files);
-		foreach ($files as $file) $content .= self::return_view($file, $data);
+		foreach ($files as $file) $content .= static::return_view($file, $data);
 		$data['content'] = $content;
-		self::template_view($template, $data);
+		static::template_view($template, $data);
 	}
 	
 }

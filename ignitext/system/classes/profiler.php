@@ -12,7 +12,7 @@
 
 namespace System\Classes;
 
-class Event_Type
+abstract class Event_Type
 {
 	const NORMAL = 0;
 	const NOTICE = 1;
@@ -22,11 +22,11 @@ class Event_Type
 	static $types = array('NORMAL','NOTICE','WARNING','ERROR','ON_FIRE');
 	function get_type($type)
 	{
-		return self::$types[$type];
+		return static::$types[$type];
 	}
 }
 
-class Profiler
+abstract class Profiler
 {
 	//Settings
 	protected static $log_everything = false;
@@ -43,7 +43,7 @@ class Profiler
 		{
 			switch ($property)
 			{
-				default: return self::$$property; break;
+				default: return static::$$property; break;
 			}
 		}
 		else
@@ -51,10 +51,10 @@ class Profiler
 			$value = $args[0];
 			switch ($property)
 			{
-				case 'enable_logging': self::read_only($property); break;
-				case 'log': self::read_only($property); break;
-				case 'start_time': self::read_only($property); break;
-				default: self::$$property = $value; break;
+				case 'enable_logging': static::read_only($property); break;
+				case 'log': static::read_only($property); break;
+				case 'start_time': static::read_only($property); break;
+				default: static::$$property = $value; break;
 			}
 		}
 	}
@@ -66,22 +66,22 @@ class Profiler
 	
 	public static function start()
 	{
-		self::$start_time = microtime(true);
+		static::$start_time = microtime(true);
 		register_shutdown_function('\System\Profiler::finish');
 	}
 	
 	public static function finish()
 	{
-		if (self::$output_html) self::render_html();
-		if (self::$output_json) self::render_json();
+		if (static::$output_html) static::render_html();
+		if (static::$output_json) static::render_json();
 	}
 
 	public static function event($event_type, $class, $method, $description)
 	{
-		if (self::$log_everything)
+		if (static::$log_everything)
 		{
-			self::$log[] = array(
-				'time' => microtime(true) - self::$start_time, 
+			static::$log[] = array(
+				'time' => microtime(true) - static::$start_time, 
 				'type' => $event_type, 
 				'from' => $class, 
 				'action' => $method, 
@@ -93,7 +93,7 @@ class Profiler
 	
 	public static function render_json()
 	{
-		$ent_log = self::$log;
+		$ent_log = static::$log;
 		array_walk_recursive($ent_log, function(&$item, $key) {	$item = htmlentities($item); });
 		$json_log = json_encode($ent_log);
 		$esc_json_log = str_replace("'", "\'", $json_log);
@@ -148,7 +148,7 @@ class Profiler
 				<th>Action</th>
 				<th>Description</th>
 			</tr>
-			<?php foreach (self::$log as $log): ?>
+			<?php foreach (static::$log as $log): ?>
 			<?php $type = Event_Type::get_type($log['type']); ?>
 				<tr>
 					<td class="type <?php echo strtolower($type)?>"><?php echo $type=='ON_FIRE'?'&otimes;':'&nbsp;'?></td>

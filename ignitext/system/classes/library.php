@@ -11,7 +11,7 @@
 
 namespace System\Classes;
 
-class Library {
+abstract class Library {
 	private function log($event_type, $description)
 	{
 		\System\Profiler::event($event_type, __NAMESPACE__.__CLASS__, __METHOD__, $description);

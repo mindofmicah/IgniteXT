@@ -11,7 +11,7 @@
 
 namespace System\Classes;
 
-class Session
+abstract class Session
 {
 	public static function __set($name, $value)
 	{

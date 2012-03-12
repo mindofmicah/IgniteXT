@@ -12,7 +12,7 @@
 
 namespace System\Classes;
 
-class Router 
+abstract class Router 
 {
 
 	public static $url_path;
@@ -26,13 +26,13 @@ class Router
 	 */
 	public static function route()
 	{
-		$url_path = self::get_url_path();
-		$controller_map = self::manual_route($url_path);
+		$url_path = static::get_url_path();
+		$controller_map = static::manual_route($url_path);
 		if ($controller_map === false)
-			$controller_map = self::get_controller_map($url_path);
+			$controller_map = static::get_controller_map($url_path);
 		
 		//Any leftover route parts become GET variables
-		self::set_get_variables($controller_map->leftovers);
+		static::set_get_variables($controller_map->leftovers);
 		
 		//If the method doesn't exist, try prefixing it with "m_".  This is useful
 		//if you want to have an action named "list" but PHP won't allow you to have
@@ -42,7 +42,7 @@ class Router
 		
 		//If the method doesn't exist, get the 404 controller.
 		if (!method_exists($controller_map->fully_qualified_class, $controller_map->action))
-			$controller_map = self::get_404_controller_map();
+			$controller_map = static::get_404_controller_map();
 		
 		//The 404 controller doesn't exist, fail gracefully.
 		if (!method_exists($controller_map->fully_qualified_class, $controller_map->action))
@@ -52,7 +52,7 @@ class Router
 			die();
 		}
 		
-		self::$controller_map = $controller_map;
+		static::$controller_map = $controller_map;
 		call_user_func($controller_map->fully_qualified_method);
 	}
 	
@@ -109,7 +109,7 @@ class Router
 			
 			while (!empty($url_parts_copy) && $url_parts_copy[0] != '')
 			{
-				if ($depth > self::$max_search_depth) break;
+				if ($depth > static::$max_search_depth) break;
 				$url_piece = array_shift($url_parts_copy);
 				
 				if (file_exists($current_dir . $url_piece . '.php'))
@@ -119,7 +119,7 @@ class Router
 					$controller_map->namespace = $namespace;
 					$controller_map->package = $package;
 					$controller_map->controller = $url_piece;
-					$controller_map->action = self::get_action($controller_map, $url_parts_copy);
+					$controller_map->action = static::get_action($controller_map, $url_parts_copy);
 					$controller_map->leftovers = $url_parts_copy;
 					return $controller_map;
 				}
@@ -150,7 +150,7 @@ class Router
 				$controller_map->namespace = $last_good_dir['namespace'];
 				$controller_map->package = $package;
 				$controller_map->controller = 'index';
-				$controller_map->action = self::get_action($controller_map, $last_good_dir['leftovers']);
+				$controller_map->action = static::get_action($controller_map, $last_good_dir['leftovers']);
 				$controller_map->leftovers = $last_good_dir['leftovers'];
 				return $controller_map;
 			}
@@ -211,7 +211,7 @@ class Router
 	
 	public function manual_route($url_path)
 	{
-		foreach(self::$manual_routes as $manual_route)
+		foreach(static::$manual_routes as $manual_route)
 		{
 			list($regex,$func) = $manual_route;
 			if (preg_match($regex, $url_path, $matches)) return $func($matches);
