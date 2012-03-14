@@ -93,7 +93,7 @@ abstract class Database
 	 * Execute a query, return a result
 	 * 
 	 * @param string $query
-	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
+	 * @param string $value1 (optional, values to be escaped, then replaces ? in query, can be array or list)
 	 * @return resource $result
 	 */
 	public static function query()
@@ -118,7 +118,7 @@ abstract class Database
 	 * Execute a query and return an array of objects representing rows
 	 * 
 	 * @param string $query
-	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
+	 * @param string $value1 (optional, values to be escaped, then replaces ? in query, can be array or list)
 	 * @return array $rows
 	 */
 	public static function rows()
@@ -133,7 +133,7 @@ abstract class Database
 	 * 
 	 * @param string $class_name
 	 * @param string $query
-	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
+	 * @param string $value1 (optional, values to be escaped, then replaces ? in query, can be array or list)
 	 * @return class $rows
 	 */
 	public static function class_rows()
@@ -153,7 +153,7 @@ abstract class Database
 	 * 
 	 * @param string $key
 	 * @param string $query
-	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
+	 * @param string $value1 (optional, values to be escaped, then replaces ? in query, can be array or list)
 	 * @return array $rows
 	 */
 	public static function rows_key()
@@ -177,7 +177,7 @@ abstract class Database
 	 * Execute a query and return a single object representing a row
 	 * 
 	 * @param string $query
-	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
+	 * @param string $value1 (optional, values to be escaped, then replaces ? in query, can be array or list)
 	 * @param array $row
 	 */
 	public static function row()
@@ -192,7 +192,7 @@ abstract class Database
 	 * 
 	 * @param string $class_name
 	 * @param string $query
-	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
+	 * @param string $value1 (optional, values to be escaped, then replaces ? in query, can be array or list)
 	 * @param class $row
 	 */
 	public static function class_row()
@@ -208,7 +208,7 @@ abstract class Database
 	 * Execute a query and return the first field that was selected
 	 * 
 	 * @param string $query
-	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
+	 * @param string $value1 (optional, values to be escaped, then replaces ? in query, can be array or list)
 	 * @return string $field
 	 */
 	public static function field()
@@ -222,7 +222,7 @@ abstract class Database
 	 * Execute a query and return an array of all fields in the first column of results
 	 * 
 	 * @param string $query
-	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
+	 * @param string $value1 (optional, values to be escaped, then replaces ? in query, can be array or list)
 	 * @return array $fields
 	 */
 	public static function fields_col()
@@ -236,7 +236,7 @@ abstract class Database
 	 * Execute a query and return an array of all fields in the first row of results
 	 * 
 	 * @param string $query
-	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
+	 * @param string $value1 (optional, values to be escaped, then replaces ? in query, can be array or list)
 	 * @return array $fields
 	*/
 	public static function fields_row()
@@ -250,7 +250,7 @@ abstract class Database
 	 * Execute a query and return the insert id
 	 * 
 	 * @param string $query
-	 * @param string $field1 (optional, fields to be escaped, then replaces ? in query, can be array or list)
+	 * @param string $value1 (optional, values to be escaped, then replaces ? in query, can be array or list)
 	 * @return integer $insert_id
 	 */
 	public static function insert()
