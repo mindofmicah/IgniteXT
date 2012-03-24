@@ -16,6 +16,7 @@ abstract class Database
 {
 	protected static $PDO_connections = array();
 	protected static $selected_connection = '';
+	protected static $default_connection = '';
 	
 	public static $log_events = false;
 	
@@ -31,7 +32,11 @@ abstract class Database
 	public static function connect($identifier, $driver, $server, $username, $password, $database)
 	{
 		static::$PDO_connections[$identifier] = new \PDO($driver . ':host=' . $server . ';dbname=' . $database, $username, $password);
-		if (count(static::$PDO_connections) == 1) static::$selected_connection = $identifier;
+		if (count(static::$PDO_connections) == 1) 
+		{
+			static::$selected_connection = $identifier;
+			static::$default_connection = $identifier;
+		}
 	}
 	
 	/**
@@ -50,7 +55,11 @@ abstract class Database
 			static::$PDO_connections[$identifier] = new \PDO($dsn, $username);
 		else
 			static::$PDO_connections[$identifier] = new \PDO($dsn);
-		if (count(static::$PDO_connections) == 1) static::$selected_connection = $identifier;
+		if (count(static::$PDO_connections) == 1) 
+		{
+			static::$selected_connection = $identifier;
+			static::$default_connection = $identifier;
+		}
 	}
 	
 	/**
@@ -64,6 +73,30 @@ abstract class Database
 			static::$selected_connection = $identifier;
 		else
 			throw new Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to select.');
+	}
+	
+	/**
+	 * Sets which connection is the "default"
+	 * 
+	 * @param string $identifier
+	 */
+	public static function set_default($identifier)
+	{
+		if (array_key_exists($identifier, static::$PDO_connections))
+			static::$default_connection = $identifier;
+		else
+			throw new Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to select.');
+	}
+	
+	/**
+	 * Selects the default connection
+	 */
+	public static function select_default()
+	{
+		if (static::$default_connection != '')
+			static::$selected_connection = static::$default_connection;
+		else
+			throw new Exception('No default connection set.');
 	}
 	
 	/**
