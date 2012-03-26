@@ -28,6 +28,7 @@ class Form_Validation
 	function checked() { return $this->checked; }
 	function checked_valid() { return ($this->checked && $this->valid); }
 	function checked_invalid() { return ($this->checked && !$this->valid); }
+	function reset() { $this->valid = false; $this->checked = false; $this->errors = array(); }
 
 	function clear_rules() { $this->rules = array(); }
 	function get_rules() { return $this->rules; }
@@ -64,8 +65,12 @@ class Form_Validation
 	 */
 	function add_rules($rules)
 	{
+		if (is_array($rules) === false) throw new \Exception('Invalid rule array.  Please make sure array is in this format: array( array("fieldname", "Field Label", "comma,separated,rule,list"),... )');
 		foreach ($rules as $rule)	
+		{
+			if (is_array($rule) === false || count($rule) != 3) throw new \Exception('Invalid rule array.  Please make sure array is in this format: array( array("fieldname", "Field Label", "comma,separated,rule,list"),... )');
 			$this->rules[ $rule[0] ] = array('label' => $rule[1], 'rules' => $rule[2]);
+		}
 	}
 	
 	/**
@@ -76,11 +81,11 @@ class Form_Validation
 	 */
 	function validate($array)
 	{
+		if (is_array($this->rules) === false) $this->rules = array();
 		$this->array = $array;
 		$this->valid = true;
 		foreach ($this->rules as $key => $info)
 		{
-			if (is_array($info) === false) throw new Exception('Invalid rule array.  Please make sure array is in this format: array( array("fieldname", "Field Label", "comma,separated,rule,list"),... )');
 			$label = $info['label'];
 			$rule_list = $info['rules'];
 			$value = $this->get_value($key);
@@ -108,7 +113,7 @@ class Form_Validation
 	{
 		if (strpos($rule,'['))
 		{
-			if (substr($rule, -1) != ']') throw new Exception('Invalid rule parameter format.  Please make sure rule is in this format: rule[1,2]');
+			if (substr($rule, -1) != ']') throw new \Exception('Invalid rule parameter format.  Please make sure rule is in this format: rule[1,2]');
 			$rule_parts = explode('[', $rule);
 			list($rule,$parameters) = $rule_parts;
 			$parameters = substr($parameters, 0, -1);

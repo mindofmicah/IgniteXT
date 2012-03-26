@@ -6,12 +6,38 @@ error_reporting(E_ALL ^ E_NOTICE);
 require_once dirname(__FILE__) . '/../../../../../ignitext/source/libraries/ixt/form_validation.php';
 require_once dirname(__FILE__) . '/../../../../../ignitext/source/libraries/ixt/validation.php';
 
+class Test_Rule_Class
+{
+	public static function must_be_five($input, $return_error_message = false)
+	{
+		if (isset($input) && $input == 5) return true;
+		else if ($return_error_message == true) return 'must be five.';
+		else return false;
+	}
+}
+
 class Form_ValidationTest extends \PHPUnit_Framework_TestCase {
 
 	protected $form;
 
 	protected function setUp() { $this->form = new Form_Validation;	}
 	protected function tearDown() {	}
+	
+	public function testCreate_with_rule_class()
+	{
+		$this->form = new Form_Validation(new Test_Rule_Class);
+		$rules = array( array('test','test','must_be_five') );
+		$input = array('test' => 'test');
+		$this->form->set_rules($rules);
+		$this->form->validate($input);
+		$this->assertEquals($this->form->get_errors(),'The test field must be five.');
+		
+		$this->form->reset();
+		$input = array('test' => 5);
+		$this->form->validate($input);
+		$this->assertEquals($this->form->get_errors(),'');
+		$this->assertTrue($this->form->valid());
+	}
 
 	public function testValid() {	}
 	public function testChecked() {	}
