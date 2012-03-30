@@ -33,6 +33,7 @@ define('IXTDIR', dirname(__FILE__) . '/ignitext/');
  * contains your index.php and assets folder.
  */
 define('BASEURL', '/');
+define('ASSETS', BASEURL . 'assets/');
 
 /**
  * Define the application identifier. This will be used by system classes to 
@@ -40,12 +41,6 @@ define('BASEURL', '/');
  * shared resources such as PHP sessions.
  */
 define('APPID', 'my_application');
-
-/**
- * Sets some PHP configuration options at runtime. Comment this line out if you 
- * only want to use the settings from your server's php.ini file.
- */
-include BASEDIR . 'php_settings.php';
 
 /**
  * Find and require the autoloader. 
