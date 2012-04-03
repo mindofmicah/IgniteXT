@@ -24,6 +24,7 @@ abstract class Database
 	 * Connects to a database server and stores the connection in $PDO_connections.
 	 *  
 	 * @param string $identifier A name used to identify this connection
+	 * @param string $driver
 	 * @param string $server
 	 * @param string $username
 	 * @param string $password

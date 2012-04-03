@@ -20,27 +20,27 @@
  * @license    MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-/**
- * Define locations of directories used by IgniteXT.
- */
 define('BASEDIR', dirname(__FILE__) . '/');
-define('APPDIR', dirname(__FILE__) . '/application/');
-define('SHRDIR', dirname(__FILE__) . '/shared/');
-define('IXTDIR', dirname(__FILE__) . '/ignitext/');
 
 /**
- * Define the base URL. This relative URL should point to the location that
- * contains your index.php and assets folder.
+ * Load the application configuration file. 
  */
-define('BASEURL', '/');
-define('ASSETS', BASEURL . 'assets/');
+$application_config = parse_ini_file('config.ini', true);
+if ($application_config === false) throw new Exception('Failed to load configuration file.');
 
 /**
- * Define the application identifier. This will be used by system classes to 
- * prevent multiple applications from interfering with each other when using 
- * shared resources such as PHP sessions.
+ * Create constants using data from the config file.
  */
-define('APPID', 'my_application');
+define('APPID', $application_config['general']['APPID']);
+define('APPDIR', $application_config['directories']['APPDIR']);
+define('SHRDIR', $application_config['directories']['SHRDIR']);
+define('IXTDIR', $application_config['directories']['IXTDIR']);
+define('BASEURL', $application_config['general']['BASEURL']);
+define('ASSETS', 
+	($application_config['general']['ASSETS_PREPEND_BASEURL'] ? BASEURL : '') . 
+	$application_config['general']['ASSETS']
+);
+
 
 /**
  * Find and require the autoloader. 
@@ -62,6 +62,6 @@ foreach ($dirs as $dir) foreach (glob($dir . 'config/*.php') as $config_file) in
 /**
  * Run the application by starting the route which will call the appropriate controller.
  */
-\System\Profiler::event( \System\Event_Type::NORMAL, 'IgniteXT', 'Start Application', 'Application has started running.');
-\System\Router::route($_GET['ixt_route']);
-\System\Profiler::event( \System\Event_Type::NORMAL, 'IgniteXT', 'Finish Application', 'Application has finished running.');
+\System\Profiler::event(\System\Event_Type::NORMAL, 'IgniteXT', 'Start Application', 'Application has started running.');
+\System\Router::route(isset($_GET['ixt_route']) ? $_GET['ixt_route'] : '');
+\System\Profiler::event(\System\Event_Type::NORMAL, 'IgniteXT', 'Finish Application', 'Application has finished running.');
