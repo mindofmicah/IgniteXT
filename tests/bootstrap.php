@@ -1,7 +1,7 @@
 <?php
 require 'Patchwork.php';
 
-define('BASEDIR', realpath('../') . '/');
+define('BASEDIR', dirname(__FILE__) . '/../');
 define('APPDIR', BASEDIR . 'application/');
 define('SHRDIR', BASEDIR . 'shared/');
 define('IXTDIR', BASEDIR . 'ignitext/');
