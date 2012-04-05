@@ -13,7 +13,7 @@ contributors.
 ---
 
 <a href="https://github.com/antecedent/patchwork">Patchwork</a>  
-Copyright (c) 2010 Ignas Rudaitis
+Copyright (c) 2010 Ignas Rudaitis  
 Licensed under the <a href="http://www.opensource.org/licenses/mit-license.php">MIT License</a>
 
 
