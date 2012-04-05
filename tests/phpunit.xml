@@ -1,0 +1,8 @@
+<phpunit>
+	<filter>
+		<blacklist>
+			<directory suffix=".php">lib</directory>
+			<file>Patckwork.php</file>
+		</blacklist>
+	</filter>
+</phpunit>
