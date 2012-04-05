@@ -1,9 +1,5 @@
 <?php
-
 namespace Libraries\IXT;
-
-error_reporting(E_ALL ^ E_NOTICE);
-require_once dirname(__FILE__) . '/../../../../../ignitext/source/libraries/ixt/stopwatch.php';
 
 class StopwatchTest extends \PHPUnit_Framework_TestCase {
 

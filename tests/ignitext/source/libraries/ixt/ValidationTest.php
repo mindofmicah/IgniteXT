@@ -1,9 +1,6 @@
 <?php
 namespace Libraries\IXT;
 
-error_reporting(E_ALL ^ E_NOTICE);
-require_once dirname(__FILE__) . '/../../../../../ignitext/source/libraries/ixt/validation.php';
-
 class ValidationTest extends \PHPUnit_Framework_TestCase 
 {
 	protected function setUp() { }
@@ -312,7 +309,7 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $from, $to, $assert) = $data_assert;
-			$this->assertEquals(Validation::range($data, $from, $to), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
+			$this->assertEquals(Validation::range($data, $from, $to), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($from) . ') ' . (string)$from . ' (' . gettype($to) . ') ' . (string)$to);
 		}
 	}
 	
@@ -330,7 +327,7 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $length, $assert) = $data_assert;
-			$this->assertEquals(Validation::min_length($data, $length), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
+			$this->assertEquals(Validation::min_length($data, $length), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($length) . ') ' . (string)$length);
 		}
 	}
 
@@ -348,7 +345,7 @@ class ValidationTest extends \PHPUnit_Framework_TestCase
 		foreach ($test_data as $data_assert)
 		{
 			list($data, $length, $assert) = $data_assert;
-			$this->assertEquals(Validation::max_length($data, $length), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($param) . ') ' . (string)$param);
+			$this->assertEquals(Validation::max_length($data, $length), $assert, 'Input: ('. gettype($data) . ') ' . (string)$data . ' (' . gettype($length) . ') ' . (string)$length);
 		}
 	}
 	

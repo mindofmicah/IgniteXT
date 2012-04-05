@@ -1,10 +1,5 @@
 <?php
-
 namespace Libraries\IXT;
-
-error_reporting(E_ALL ^ E_NOTICE);
-require_once dirname(__FILE__) . '/../../../../../ignitext/source/libraries/ixt/form_validation.php';
-require_once dirname(__FILE__) . '/../../../../../ignitext/source/libraries/ixt/validation.php';
 
 class Test_Rule_Class
 {
