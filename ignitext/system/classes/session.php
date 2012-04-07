@@ -13,13 +13,20 @@ namespace System\Classes;
 
 abstract class Session
 {
-	public static function __set($name, $value)
+	public static function set($name, $value)
 	{
-		$_SESSION[ APPID ][ $name ] = $value;
+		$_SESSION[APPID][$name] = $value;
 	}
 	
-	public static function __get($name)
+	public static function get($name)
 	{
-		return $_SESSION[ APPID ][ $name ];
+		if (isset($_SESSION[APPID][$name])) return $_SESSION[APPID][$name];
+		else return null;
+	}
+	
+	public static function &reference()
+	{
+		if (!isset($_SESSION[APPID])) $_SESSION[APPID] = array();
+		return $_SESSION[APPID];
 	}
 }
