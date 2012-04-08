@@ -38,6 +38,8 @@ class Session_Test extends \PHPUnit_Framework_TestCase
 		
 		$six = Session::get('six');
 		$this->assertEquals($six['seven'], 'eight');
+		
+		$this->assertNull(Session::get('nine'));
 	}
 	
 	public function test_reference()
