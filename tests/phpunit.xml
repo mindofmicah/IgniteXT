@@ -2,6 +2,7 @@
 	<filter>
 		<blacklist>
 			<directory suffix=".php">lib</directory>
+			<directory suffix=".php">mocks</directory>
 			<file>Patchwork.php</file>
 		</blacklist>
 	</filter>
