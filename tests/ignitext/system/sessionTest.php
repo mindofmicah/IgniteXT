@@ -3,7 +3,7 @@ namespace System;
 
 class Session_Test extends \PHPUnit_Framework_TestCase 
 {
-	public static function setUpBeforeClass()	{	if (!isset($_SESSION)) session_start(); }
+	public static function setUpBeforeClass()	{	if (!isset($_SESSION)) @session_start(); }
 	public static function tearDownBeforeClass()	{	}
 	
 	protected function setUp() { $_SESSION = array(); }
