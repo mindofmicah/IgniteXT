@@ -29,40 +29,17 @@ abstract class Event_Type
 abstract class Profiler
 {
 	//Settings
-	protected static $log_everything = false;
-	protected static $output_json = false;
-	protected static $output_html = false;
+	public static $log_everything = false;
+	public static $output_json = false;
+	public static $output_html = false;
 	
 	protected static $classes_logging = array();
 	protected static $start_time = 0;
 	protected static $log = array();
 	
-	public static function __callStatic($property, $args)
-	{
-		if ($args === null)
-		{
-			switch ($property)
-			{
-				default: return static::$$property; break;
-			}
-		}
-		else
-		{
-			$value = $args[0];
-			switch ($property)
-			{
-				case 'enable_logging': static::read_only($property); break;
-				case 'log': static::read_only($property); break;
-				case 'start_time': static::read_only($property); break;
-				default: static::$$property = $value; break;
-			}
-		}
-	}
-	
-	protected static function read_only($property)
-	{
-		throw new Exception (__CLASS__ . '::' . $property . ' is a read-only property.');
-	}
+	public static function get_classes_logging() { return static::$classes_logging; }
+	public static function get_start_time() { return static::$start_time; }
+	public static function get_log() { return static::$log; }
 	
 	public static function start()
 	{

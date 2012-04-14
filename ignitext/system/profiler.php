@@ -6,5 +6,5 @@
  */
 
 namespace System;
-class Profiler extends Classes\Profiler { function __set($a,$b) { echo "WTF"; } }
+class Profiler extends Classes\Profiler { }
 class Event_Type extends Classes\Event_Type { }
