@@ -24,19 +24,19 @@ class Form_Validation
 	private $pre_delim;
 	private $post_delim;
 	
-	function valid() { return $this->valid; }
-	function checked() { return $this->checked; }
-	function checked_valid() { return ($this->checked && $this->valid); }
-	function checked_invalid() { return ($this->checked && !$this->valid); }
-	function reset() { $this->valid = false; $this->checked = false; $this->errors = array(); }
+	public function valid() { return $this->valid; }
+	public function checked() { return $this->checked; }
+	public function checked_valid() { return ($this->checked && $this->valid); }
+	public function checked_invalid() { return ($this->checked && !$this->valid); }
+	public function reset() { $this->valid = false; $this->checked = false; $this->errors = array(); }
 
-	function clear_rules() { $this->rules = array(); }
-	function get_rules() { return $this->rules; }
+	public function clear_rules() { $this->rules = array(); }
+	public function get_rules() { return $this->rules; }
 
-	function set_error($key, $message) { $this->errors[$key] = $message; $this->valid = false; }
-	function clear_errors() { $this->errors = array(); }
+	public function set_error($key, $message) { $this->errors[$key] = $message; $this->valid = false; }
+	public function clear_errors() { $this->errors = array(); }
 
-	function set_delim($pre_delim, $post_delim) { $this->pre_delim = $pre_delim; $this->post_delim = $post_delim; }
+	public function set_delim($pre_delim, $post_delim) { $this->pre_delim = $pre_delim; $this->post_delim = $post_delim; }
 
 	public function __construct($rule_class = null)
 	{
@@ -52,7 +52,7 @@ class Form_Validation
 	 * 
 	 * @param array $rules
 	 */
-	function set_rules($rules)
+	public function set_rules($rules)
 	{
 		$this->rules = array();
 		$this->add_rules($rules);
@@ -63,7 +63,7 @@ class Form_Validation
 	 * 
 	 * @param type $rules 
 	 */
-	function add_rules($rules)
+	public function add_rules($rules)
 	{
 		if (is_array($rules) === false) throw new \Exception('Invalid rule array.  Please make sure array is in this format: array( array("fieldname", "Field Label", "comma,separated,rule,list"),... )');
 		foreach ($rules as $rule)	
@@ -79,7 +79,7 @@ class Form_Validation
 	 * @param array $array The array to validate. This will usually be $_GET or $_POST
 	 * @return boolean $valid
 	 */
-	function validate($array)
+	public function validate($array)
 	{
 		if (is_array($this->rules) === false) $this->rules = array();
 		$this->array = $array;
@@ -109,7 +109,7 @@ class Form_Validation
 		return $this->valid;
 	}
 	
-	function rule_parts($rule)
+	private function rule_parts($rule)
 	{
 		if (strpos($rule,'['))
 		{
@@ -135,7 +135,7 @@ class Form_Validation
 	 * @param string $key
 	 * @return string $value
 	 */
-	function get_value($key)
+	private function get_value($key)
 	{
 		if (strpos($key, '[') !== false)
 		{
@@ -156,7 +156,7 @@ class Form_Validation
 	 * @param string $key
 	 * @return string $error_message
 	 */
-	function get_error($key)
+	public function get_error($key)
 	{
 		if (!isset($this->errors[$key])) return '';
 		else return $this->pre_delim . $this->errors[$key] . $this->post_delim;
@@ -169,7 +169,7 @@ class Form_Validation
 	 * @param string $separator
 	 * @return string $error_message
 	 */
-	function get_errors($separator = '')
+	public function get_errors($separator = '')
 	{		
 		$error_string = implode($this->post_delim . $separator . $this->pre_delim, $this->errors);
 		return $this->pre_delim . $error_string . $this->post_delim;
@@ -181,7 +181,7 @@ class Form_Validation
 	 * @param string $key
 	 * @return string $value
 	 */
-	function form_value($key, $default='')
+	public function form_value($key, $default='')
 	{
 		if ($this->checked == false) return $default;
 		return htmlentities($this->get_value($key), ENT_QUOTES);
@@ -194,7 +194,7 @@ class Form_Validation
 	 * @param string $value
 	 * @return string $select_text
 	 */
-	function form_select($key, $value, $default = false)
+	public function form_select($key, $value, $default = false)
 	{
 		if ($this->checked == false && $default == true) return 'selected="selected"';
 		$field = $this->get_value($key);
@@ -209,11 +209,23 @@ class Form_Validation
 	 * @param string $value
 	 * @return string $check_text
 	 */
-	function form_check($key, $value, $default = false)
+	public function form_check($key, $value, $default = false)
 	{
 		if ($this->checked == false && $default == true) return 'checked="checked"';
 		$field = $this->get_value($key);
 		if ($field == $value) return 'checked="checked"';
 		else return '';
 	}
+	
+	/**
+	 * Returns whether or not the specified field had an error.
+	 * 
+	 * @param string $key
+	 * @return boolean $valid
+	 */
+	public function field_valid($key)
+	{
+		if (isset($this->errors[$key])) return false;
+		else return true;
+	}	
 }
