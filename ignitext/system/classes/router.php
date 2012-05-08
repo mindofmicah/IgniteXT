@@ -47,7 +47,13 @@ abstract class Router
 
 		static::$action = $action;
 		static::$requested_url = $requested_url;
+		
+		$arr = explode('::', $action, 2);
+		$controller = $arr[0];
+
+		if (is_callable($controller . '::pre_route')) call_user_func($controller . '::pre_route');
 		call_user_func($action);
+		if (is_callable($controller . '::post_route')) call_user_func($controller . '::post_route');
 	}
 	
 	protected static function automatic_routes($requested_url)
