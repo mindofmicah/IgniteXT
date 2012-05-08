@@ -147,4 +147,9 @@ abstract class Router
 		static::$custom_routes[] = array('regex' => $route, 'action' => $action, 'after_auto' => $after_auto);
 	}
 	
+	public static function redirect($location)
+	{
+		header('Location:' . BASEURL . $location);
+	}
+	
 }
