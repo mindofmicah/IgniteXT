@@ -33,7 +33,7 @@ abstract class Display
 		
 		if (!file_exists($ixt['path']))
 		{
-			throw new Exception('View Not Found: ' . $ixt['requested_view']);
+			throw new \Exception('View Not Found: ' . $ixt['requested_view']);
 		}
 		
 		if (is_array($data)) extract($data, EXTR_SKIP);
@@ -63,7 +63,7 @@ abstract class Display
 		$ixt['path'] = APPDIR . 'templates/' . $ixt['view'] . '.php';
 		if (!file_exists($ixt['path']))
 		{
-			throw new Exception('Template View Not Found: ' . $ixt['requested_view']);
+			throw new \Exception('Template View Not Found: ' . $ixt['requested_view']);
 		}
 		
 		if (is_array($data)) extract($data, EXTR_SKIP);
