@@ -25,7 +25,9 @@ define('BASEDIR', dirname(__FILE__) . '/');
 /**
  * Load the application configuration file. 
  */
-$application_config = parse_ini_file('config.ini', true);
+require 'json_config.php';
+$mode = 'development';
+$application_config = \System\Classes\JSON_Config::read('config.json', $mode);
 if ($application_config === false) throw new Exception('Failed to load configuration file.');
 
 /**
