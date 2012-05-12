@@ -28,7 +28,7 @@ abstract class Display
 			$ixt['file_parts'] = explode('/', $ixt['view']);
 			$ixt['package'] = array_shift($ixt['file_parts']);
 			$ixt['view'] = implode('/', $ixt['file_parts']);
-			$ixt['path'] = APPDIR . 'packages/' . $ixt['package'] . '/views/' . $ixt['file'] . '.php';
+			$ixt['path'] = APPDIR . 'packages/' . $ixt['package'] . '/views/' . $ixt['view'] . '.php';
 		}
 		
 		if (!file_exists($ixt['path']))
