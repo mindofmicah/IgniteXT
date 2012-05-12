@@ -26,7 +26,7 @@ abstract class JSON_Config
 				$inherit_arr = explode(',', $config_obj['inherits']);
 				foreach ($inherit_arr as $inherit)
 				{
-					$config[$config_mode] = array_merge_recursive($config[$inherit], $config[$config_mode]);
+					$config[$config_mode] = array_replace_recursive($config[$inherit], $config[$config_mode]);
 				}
 			}
 		}
