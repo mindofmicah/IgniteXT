@@ -13,52 +13,72 @@ namespace System\Classes;
 
 abstract class Display
 {
-	public static function view($file, &$data = null)
+	public static function view($view, &$data = null)
 	{
-		$requested_file = $file;
-		if (is_array($data)) extract($data);
-
-		$file = str_replace('..','.',$file);
+		$ixt = array(); //Prevent Variable Collisions From $data
+		$ixt['view'] = $ixt['requested_view'] = $view;
+		unset($view);
 		
-		$absolute_file = APPDIR . 'source/views/' . $file . '.php';
-		if (file_exists($absolute_file)) { require($absolute_file); return; }
+		$ixt['view'] = str_replace('..', '.', $ixt['view']);
 		
-		$file_parts = explode('/',$file);
-		$package = array_shift($file_parts);
-		$file = implode('/',$file_parts);
-		$absolute_file = APPDIR . 'packages/' . $package . '/views/' . $file . '.php';
-		if (file_exists($absolute_file)) { require($absolute_file); return; }
+		$ixt['path'] = APPDIR . 'source/views/' . $ixt['view'] . '.php';
 		
-		echo "View Not Found: " . $requested_file . ".php"; die();
+		if (!file_exists($ixt['path']))
+		{
+			$ixt['file_parts'] = explode('/', $ixt['view']);
+			$ixt['package'] = array_shift($ixt['file_parts']);
+			$ixt['view'] = implode('/', $ixt['file_parts']);
+			$ixt['path'] = APPDIR . 'packages/' . $ixt['package'] . '/views/' . $ixt['file'] . '.php';
+		}
+		
+		if (!file_exists($ixt['path']))
+		{
+			throw new Exception('View Not Found: ' . $ixt['requested_view']);
+		}
+		
+		if (is_array($data)) extract($data, EXTR_SKIP);
+		if (!isset($tpl)) $tpl = array();
+		require($ixt['path']); 
+		$data['tpl'] = $tpl;
+		return true; 
 	}
 
-	public static function return_view($file, &$data = null)
+	public static function return_view($view, &$data = null)
 	{
 		ob_start();
-		static::view($file,$data);
-		$ret = ob_get_contents();
+		static::view($view,$data);
+		$output = ob_get_contents();
 		ob_end_clean();
-		return $ret;
+		return $output;
 	}
 	
-	public static function template_view($file, &$data)
+	public static function template_view($view, &$data)
 	{
-		$requested_file = $file;
-		if (is_array($data)) extract($data);
-
-		$file = str_replace('..','.',$file);
+		$ixt = array(); //Prevent Variable Collisions From $data
+		$ixt['view'] = $ixt['requested_view'] = $view;
+		unset($view);
 		
-		$absolute_file = APPDIR . 'templates/' . $file . '.php';
-		if (file_exists($absolute_file)) { require($absolute_file); return; }
-		echo "Template View Not Found: " . $requested_file . ".php"; die();
+		$ixt['view'] = str_replace('..', '.', $ixt['view']);
+		
+		$ixt['path'] = APPDIR . 'templates/' . $ixt['view'] . '.php';
+		if (!file_exists($ixt['path']))
+		{
+			throw new Exception('Template View Not Found: ' . $ixt['requested_view']);
+		}
+		
+		if (is_array($data)) extract($data, EXTR_SKIP);
+		if (!isset($tpl)) $tpl = array();
+		require($ixt['path']); 
+		$data['tpl'] = $tpl;
+		return true; 
 	}
 
-	public static function template($files, &$data=null, $template = 'main')
+	public static function template($files, &$data=null, $template = 'default')
 	{
 		$content = '';
 		if (!is_array($files)) $files = array($files);
 		foreach ($files as $file) $content .= static::return_view($file, $data);
-		$data['content'] = $content;
+		$data['tpl']['content'] = $content;
 		static::template_view($template, $data);
 	}
 	

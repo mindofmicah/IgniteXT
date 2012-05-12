@@ -73,7 +73,7 @@ abstract class Database
 		if (array_key_exists($identifier, static::$PDO_connections))
 			static::$selected_connection = $identifier;
 		else
-			throw new Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to select.');
+			throw new \Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to select.');
 	}
 	
 	/**
@@ -86,7 +86,7 @@ abstract class Database
 		if (array_key_exists($identifier, static::$PDO_connections))
 			static::$default_connection = $identifier;
 		else
-			throw new Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to select.');
+			throw new \Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to select.');
 	}
 	
 	/**
@@ -97,7 +97,7 @@ abstract class Database
 		if (static::$default_connection != '')
 			static::$selected_connection = static::$default_connection;
 		else
-			throw new Exception('No default connection set.');
+			throw new \Exception('No default connection set.');
 	}
 	
 	/**
@@ -113,7 +113,7 @@ abstract class Database
 		else if (array_key_exists($identifier, static::$PDO_connections))
 			return static::$PDO_connections[$identifier];
 		else 
-			throw new Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to get the PDO object for.');
+			throw new \Exception('Invalid database selection.  Make sure you have successfully connected to the database that you are trying to get the PDO object for.');
 	}
 	
 	/**
@@ -195,14 +195,14 @@ abstract class Database
 		$arguments = func_get_args();
 		
 		if (count($arguments) > 1) $key = array_shift($arguments);
-		else throw new Exception('The rows_key function requires at least 2 parameters: $key and $query.');
+		else throw new \Exception('The rows_key function requires at least 2 parameters: $key and $query.');
 				
 		$rows = call_user_func_array('static::rows', $arguments);
-		if (array_key_exists($key,$rows[0]) == false) 
-			throw new Exception('The specified key does not exist in the result set.');
+		if (property_exists($rows[0],$key) == false) 
+			throw new \Exception('The specified key does not exist in the result set.');
 		
 		foreach ($rows as $row) 
-			$rows_key[ $row[$key] ] = $row;
+			$rows_key[$row->$key] = $row;
 		
 		return $rows_key;
 	}

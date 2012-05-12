@@ -6,5 +6,4 @@
  */
 
 namespace System;
-class Profiler extends Classes\Profiler { }
-class Event_Type extends Classes\Event_Type { }
+class JSON_Config extends Classes\JSON_Config { }

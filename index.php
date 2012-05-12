@@ -25,20 +25,22 @@ define('BASEDIR', dirname(__FILE__) . '/');
 /**
  * Load the application configuration file. 
  */
-$application_config = parse_ini_file('config.ini', true);
+require 'json_config.php';
+$mode = 'development';
+$application_config = \System\Classes\JSON_Config::read('config.json', $mode);
 if ($application_config === false) throw new Exception('Failed to load configuration file.');
 
 /**
  * Create constants using data from the config file.
  */
-define('APPID', $application_config['general']['APPID']);
-define('APPDIR', $application_config['directories']['APPDIR']);
-define('SHRDIR', $application_config['directories']['SHRDIR']);
-define('IXTDIR', $application_config['directories']['IXTDIR']);
-define('BASEURL', $application_config['general']['BASEURL']);
+define('APPID', $application_config['APPID']);
+define('APPDIR', $application_config['APPDIR']);
+define('SHRDIR', $application_config['SHRDIR']);
+define('IXTDIR', $application_config['IXTDIR']);
+define('BASEURL', $application_config['BASEURL']);
 define('ASSETS', 
-	($application_config['general']['ASSETS_PREPEND_BASEURL'] ? BASEURL : '') . 
-	$application_config['general']['ASSETS']
+	($application_config['ASSETS_PREPEND_BASEURL'] ? BASEURL : '') . 
+	$application_config['ASSETS']
 );
 
 

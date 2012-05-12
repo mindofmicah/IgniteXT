@@ -17,7 +17,7 @@ abstract class Router
 
 	public static $requested_url;
 	public static $action;
-	public static $manual_routes = array();
+	public static $custom_routes = array();
 	
 	/**
 	 * Parses the URL to determine which controller and method should be used
@@ -28,9 +28,11 @@ abstract class Router
 		$requested_url = isset($route) ? trim($route, '/') : '';		
 		
 		$action = false;
-		if ($action === false) $action = static::manual_routes($requested_url);
+		if ($action === false) $action = static::custom_routes($requested_url);
 		if ($action === false) $action = static::automatic_routes($requested_url);
-		if ($action === false) $action = static::manual_routes($requested_url, true);
+		if ($action === false) $action = static::custom_routes($requested_url, true);
+		
+		if (is_callable($action) === false) $action = false;
 		
 		if ($action === false && method_exists('\Controllers\_404','index')) 
 			$action = '\Controllers\_404::index';
@@ -45,7 +47,13 @@ abstract class Router
 
 		static::$action = $action;
 		static::$requested_url = $requested_url;
+		
+		$arr = explode('::', $action, 2);
+		$controller = $arr[0];
+
+		if (is_callable($controller . '::pre_route')) call_user_func($controller . '::pre_route');
 		call_user_func($action);
+		if (is_callable($controller . '::post_route')) call_user_func($controller . '::post_route');
 	}
 	
 	protected static function automatic_routes($requested_url)
@@ -103,19 +111,45 @@ abstract class Router
 		return false;
 	}
 	
-	protected static function manual_routes($requested_url, $after_auto = false)
+	protected static function custom_routes($requested_url, $after_auto = false)
 	{
+		foreach (static::$custom_routes as $route)
+		{
+			if ($route['after_auto'] == $after_auto)
+			{
+				$found_match = preg_match($route['regex'], $requested_url, $matches);
+				if ($found_match === 1)
+				{
+					//Get rid of the matched string
+					array_shift($matches);
+					$i = 0;
+					foreach ($matches as $key => $value)
+					{
+						if ($i % 2 == 0 && !isset($_GET[$key])) $_GET[$key] = $value;
+						$i++;
+					}
+					return $route['action'];
+				}
+				else if ($found_match === false) throw new Exception('Manual route preg_match failed: ' . $route['regex']);
+			}
+		}
 		return false;
 	}
 	
-	public static function simple_route($route, $after_auto = false) 
+	public static function simple_route($route, $action, $after_auto = false) 
 	{
-		
+		//TODO: Simple Routes
+		static::$custom_routes[] = array('regex' => $route, 'action' => $action, 'after_auto' => $after_auto);
 	}
 	
-	public static function regex_route($route, $vars, $after_auto = false) 
+	public static function regex_route($route, $action, $after_auto = false) 
 	{
-		
+		static::$custom_routes[] = array('regex' => $route, 'action' => $action, 'after_auto' => $after_auto);
+	}
+	
+	public static function redirect($location)
+	{
+		header('Location:' . BASEURL . $location);
 	}
 	
 }
