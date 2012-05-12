@@ -33,14 +33,14 @@ if ($application_config === false) throw new Exception('Failed to load configura
 /**
  * Create constants using data from the config file.
  */
-define('APPID', $application_config['general']['APPID']);
-define('APPDIR', $application_config['directories']['APPDIR']);
-define('SHRDIR', $application_config['directories']['SHRDIR']);
-define('IXTDIR', $application_config['directories']['IXTDIR']);
-define('BASEURL', $application_config['general']['BASEURL']);
+define('APPID', $application_config['APPID']);
+define('APPDIR', $application_config['APPDIR']);
+define('SHRDIR', $application_config['SHRDIR']);
+define('IXTDIR', $application_config['IXTDIR']);
+define('BASEURL', $application_config['BASEURL']);
 define('ASSETS', 
-	($application_config['general']['ASSETS_PREPEND_BASEURL'] ? BASEURL : '') . 
-	$application_config['general']['ASSETS']
+	($application_config['ASSETS_PREPEND_BASEURL'] ? BASEURL : '') . 
+	$application_config['ASSETS']
 );
 
 
