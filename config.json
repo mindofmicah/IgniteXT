@@ -25,10 +25,14 @@
 		"IXTDIR": "ignitext/",
 		
 		// Database Config
-		// databases[] = "identifier,driver,server,username,password,database"
-		// databases[] = "identifier,dsn[,username[,password]]"
+		// "databases": {
+		//   "identifier": "driver,server,username,password,database",
+		//   "identifier": "dsn[,username[,password]]",
+		//   //Example:
+		//   "main": "mysql,localhost,root,,database",
+		//   "other": "sqlite:my_db.sqlite"
+		// }
 		"databases": {
-			"config": "main,sqlite:ixt_demo.sqlite"
 		}
 	},
 	

@@ -5,7 +5,7 @@
  * If set to true, the Profiler will log everything regardless of what 
  * classes having logging enabled.
  */
-\System\Profiler::log_everything(false);
+\System\Profiler::$log_everything = false;
 
 /**
  * Class-based Event Logging
@@ -23,7 +23,7 @@
  *   Show based on variable set in config files: 
  *     if ($debug === true) {
  */
-if (false) \System\Profiler::output_html(true);
+if (false) \System\Profiler::$output_html = true;
 
 /**
  * Database Configuration
