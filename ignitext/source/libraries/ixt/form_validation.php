@@ -218,7 +218,7 @@ class Form_Validation
 	}
 	
 	/**
-	 * Returns whether or not the specified field had an error.
+	 * Returns whether or not the specified field is valid.
 	 * 
 	 * @param string $key
 	 * @return boolean $valid
@@ -228,4 +228,17 @@ class Form_Validation
 		if (isset($this->errors[$key])) return false;
 		else return true;
 	}	
+	
+	/**
+	 * Returns whether or not the specified field had an error.
+	 * 
+	 * @param string $key
+	 * @return boolean $error
+	 */
+	public function field_error($key)
+	{
+		return !$this->field_valid($key);
+	}	
+	
+	
 }
