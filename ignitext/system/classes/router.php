@@ -32,13 +32,13 @@ abstract class Router
 		if ($action === false) $action = static::automatic_routes($requested_url);
 		if ($action === false) $action = static::custom_routes($requested_url, true);
 		
-		if (is_callable($action) === false) $action = false;
-		
-		if ($action === false && method_exists('\Controllers\_404','index')) 
+		if (is_callable($action) === false) 
+		{
 			$action = '\Controllers\_404::index';
-		
+		}
+
 		//The 404 controller doesn't exist, fail gracefully.
-		if ($action === false)
+		if (is_callable($action) === false) 
 		{
 			header("HTTP/1.0 404 Not Found");
 			echo "404 Not Found";
@@ -91,21 +91,21 @@ abstract class Router
 			
 			if (!is_dir($current_dir)) continue;
 			
-			if (count($url_parts_copy) == 0 && method_exists($namespace . 'index', 'index')) return $namespace . 'index::index';
+			if (count($url_parts_copy) == 0 && is_callable($namespace . 'index::index')) return $namespace . 'index::index';
 			
 			$try_action = 'index';
 			$try_controller = $namespace . implode('\\', $url_parts_copy);
-			if (method_exists($try_controller, $try_action)) return $try_controller . '::' . $try_action;
+			if (is_callable($try_controller . '::' . $try_action)) return $try_controller . '::' . $try_action;
 			
 			$try_action = array_pop($url_parts_copy);
 			$try_controller = $namespace . implode('\\', $url_parts_copy);
-			if (method_exists($try_controller, $try_action)) return $try_controller . '::' . $try_action;
+			if (is_callable($try_controller . '::' . $try_action)) return $try_controller . '::' . $try_action;
 			
 			//If the method doesn't exist, try prefixing it with "m_".  This is useful
 			//if you want to have an action named "list" but PHP won't allow you to have
 			//a method named "list".
 			$try_action = 'm_' . $try_action;
-			if (method_exists($try_controller, $try_action)) return $try_controller . '::' . $try_action;
+			if (is_callable($try_controller . '::' . $try_action)) return $try_controller . '::' . $try_action;
 		}
 		
 		return false;
