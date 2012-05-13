@@ -18,6 +18,7 @@ abstract class Router
 	public static $requested_url;
 	public static $action;
 	public static $custom_routes = array();
+	public static $_404 = '\Controllers\_404::index';
 	
 	/**
 	 * Parses the URL to determine which controller and method should be used
@@ -34,15 +35,13 @@ abstract class Router
 		
 		if (is_callable($action) === false) 
 		{
-			$action = '\Controllers\_404::index';
+			$action = static::$_404;
 		}
 
 		//The 404 controller doesn't exist, fail gracefully.
 		if (is_callable($action) === false) 
 		{
-			header("HTTP/1.0 404 Not Found");
-			echo "404 Not Found";
-			die();
+			return static::die_404();
 		}
 
 		static::$action = $action;
@@ -54,6 +53,13 @@ abstract class Router
 		if (is_callable($controller . '::pre_route')) call_user_func($controller . '::pre_route');
 		call_user_func($action);
 		if (is_callable($controller . '::post_route')) call_user_func($controller . '::post_route');
+	}
+	
+	protected static function die_404()
+	{
+		header("HTTP/1.0 404 Not Found");
+		echo "404 Not Found";
+		die();
 	}
 	
 	protected static function automatic_routes($requested_url)
