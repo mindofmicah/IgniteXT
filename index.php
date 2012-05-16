@@ -27,7 +27,7 @@ define('BASEDIR', dirname(__FILE__) . '/');
  */
 require 'json_config.php';
 $mode = 'development';
-$application_config = \System\Classes\JSON_Config::read('config.json', $mode);
+$application_config = \Services\System\Classes\JSON_Config::read('config.json', $mode);
 if ($application_config === false) throw new Exception('Failed to load configuration file.');
 
 /**
@@ -47,23 +47,23 @@ define('ASSETS',
 /**
  * Find and require the autoloader. 
  */
-if (file_exists(APPDIR . 'system/autoload.php')) require APPDIR . 'system/autoload.php';
-elseif (file_exists(SHRDIR . 'system/autoload.php')) require SHRDIR . 'system/autoload.php';
-elseif (file_exists(IXTDIR . 'system/autoload.php')) require IXTDIR . 'system/autoload.php';
+if (file_exists(APPDIR . 'autoload.php')) require APPDIR . 'autoload.php';
+elseif (file_exists(SHRDIR . 'autoload.php')) require SHRDIR . 'autoload.php';
+elseif (file_exists(IXTDIR . 'autoload.php')) require IXTDIR . 'autoload.php';
 else throw new Exception('Autoloader not found.');
 
-\System\Profiler::start();
+\Services\System\Profiler::start();
 session_start();
 
 /**
  * Load all of the config files. 
  */
 $dirs = array(IXTDIR, SHRDIR, APPDIR);
-foreach ($dirs as $dir) foreach (glob($dir . 'config/*.php') as $config_file) include $config_file;
+foreach ($dirs as $dir) foreach (glob($dir . 'config/*.php') as $config_file) require $config_file;
 
 /**
  * Run the application by starting the route which will call the appropriate controller.
  */
-\System\Profiler::event(\System\Event_Type::NORMAL, 'IgniteXT', 'Start Application', 'Application has started running.');
-\System\Router::route(isset($_GET['ixt_route']) ? $_GET['ixt_route'] : '');
-\System\Profiler::event(\System\Event_Type::NORMAL, 'IgniteXT', 'Finish Application', 'Application has finished running.');
+\Services\System\Profiler::event(\System\Event_Type::NORMAL, 'IgniteXT', 'Start Application', 'Application has started running.');
+\Services\System\Router::route(isset($_GET['ixt_route']) ? $_GET['ixt_route'] : '');
+\Services\System\Profiler::event(\System\Event_Type::NORMAL, 'IgniteXT', 'Finish Application', 'Application has finished running.');
