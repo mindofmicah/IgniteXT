@@ -44,7 +44,7 @@ abstract class Profiler extends \Services\System\Service
 	public static function start()
 	{
 		static::$start_time = microtime(true);
-		register_shutdown_function('\System\Profiler::finish');
+		register_shutdown_function('\Services\System\Profiler::finish');
 	}
 	
 	public static function finish()

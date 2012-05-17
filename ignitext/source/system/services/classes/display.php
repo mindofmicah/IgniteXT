@@ -15,30 +15,38 @@ abstract class Display extends \Services\System\Service
 {
 	public static function view($view, &$data = null)
 	{
-		$ixt = array(); //Prevent Variable Collisions From $data
-		$ixt['view'] = $ixt['requested_view'] = $view;
-		unset($view);
+		$requested_view = $view;
 		
-		$ixt['view'] = str_replace('..', '.', $ixt['view']);
+		$view = str_replace('..', '.', $view);
+		$parts = explode('/', $view);
+		$filename = array_pop($parts);
 		
-		$ixt['path'] = APPDIR . 'source/views/' . $ixt['view'] . '.php';
-		
-		if (!file_exists($ixt['path']))
+		$check_dirs = array(APPDIR, SHRDIR);
+		foreach ($check_dirs as $dir)
 		{
-			$ixt['file_parts'] = explode('/', $ixt['view']);
-			$ixt['package'] = array_shift($ixt['file_parts']);
-			$ixt['view'] = implode('/', $ixt['file_parts']);
-			$ixt['path'] = APPDIR . 'packages/' . $ixt['package'] . '/views/' . $ixt['view'] . '.php';
+			for ($i = 0; $i <= count($parts); $i++)
+			{
+				$location = $dir . 'source/';
+				if ($i > 0) $location .= implode(array_slice($parts, 0, $i),'/') . '/';
+				if ($i > 0 && !is_dir($location)) continue 2; //If this isn't a directory, none of the others will be either
+				$location .= 'views' . '/';
+				if ($i < count($parts)) $location .= implode(array_slice($parts, -(count($parts)-$i)),'/') . '/';
+				$location .= $filename . '.php';
+				if (file_exists($location)) break 2;
+			}
+		}
+		$ixt['location'] = $location;
+				
+		if (!file_exists($location))
+		{
+			throw new \Exception('View Not Found: ' . $requested_view);
 		}
 		
-		if (!file_exists($ixt['path']))
-		{
-			throw new \Exception('View Not Found: ' . $ixt['requested_view']);
-		}
+		unset($view, $requested_view, $parts, $check_dirs, $dir, $location, $filename, $i);
 		
 		if (is_array($data)) extract($data, EXTR_SKIP);
 		if (!isset($tpl)) $tpl = array();
-		require($ixt['path']); 
+		require($ixt['location']); 
 		$data['tpl'] = $tpl;
 		return true; 
 	}

@@ -64,6 +64,6 @@ foreach ($dirs as $dir) foreach (glob($dir . 'config/*.php') as $config_file) re
 /**
  * Run the application by starting the route which will call the appropriate controller.
  */
-\Services\System\Profiler::event(\System\Event_Type::NORMAL, 'IgniteXT', 'Start Application', 'Application has started running.');
+\Services\System\Profiler::event(\Services\System\Event_Type::NORMAL, 'IgniteXT', 'Start Application', 'Application has started running.');
 \Services\System\Router::route(isset($_GET['ixt_route']) ? $_GET['ixt_route'] : '');
-\Services\System\Profiler::event(\System\Event_Type::NORMAL, 'IgniteXT', 'Finish Application', 'Application has finished running.');
+\Services\System\Profiler::event(\Services\System\Event_Type::NORMAL, 'IgniteXT', 'Finish Application', 'Application has finished running.');

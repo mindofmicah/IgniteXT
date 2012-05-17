@@ -23,8 +23,6 @@ function autoload_source($class)
 	if (!in_array($type, $valid_types)) return;
 
 	$filename = array_pop($parts);
-
-	$path = implode('/', $parts);
 	
 	$check_dirs = array(APPDIR, SHRDIR, IXTDIR);
 	foreach ($check_dirs as $dir)

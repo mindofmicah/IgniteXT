@@ -12,7 +12,7 @@
 
 namespace Services\System\Classes;
 
-abstract class Database extends Services\System\Service
+abstract class Database extends \Services\System\Service
 {
 	protected static $PDO_connections = array();
 	protected static $selected_connection = '';

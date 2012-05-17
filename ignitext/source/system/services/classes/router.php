@@ -67,42 +67,26 @@ abstract class Router extends \Services\System\Service
 		if ($requested_url == '') $url_parts = array();
 		else $url_parts = explode('/', $requested_url);
 		
-		//Search the source folders first, then the package folders
-		//array($directory, $is_package)
-		$search_dir_list = array(
-			array(APPDIR, false),
-			array(SHRDIR, false),
-			array(APPDIR, true),
-			array(SHRDIR, true),
-		);
+		$dirs = array(APPDIR, SHRDIR);
 		
-		foreach ($search_dir_list as $search_dir_info)
-		{
-			list($search_dir, $is_package) = $search_dir_info;
-			
-			if ($is_package && count($url_parts) == 0) continue;
+		foreach ($dirs as $dir)
+		{		
 			$url_parts_copy = $url_parts;
-			
-			if ($is_package)
-			{
-				$package = array_shift($url_parts_copy);
-				$current_dir = $search_dir . 'packages/' . $package . '/controllers/';
-				$namespace =  '\\Controllers\\' . $package . '\\';
-			}
-			else
-			{
-				$current_dir = $search_dir . 'source/controllers/';
-				$namespace = '\\Controllers\\';
-			}
-			
-			if (!is_dir($current_dir)) continue;
+			$namespace = '\\Controllers\\';	
 			
 			if (count($url_parts_copy) == 0 && is_callable($namespace . 'index::index')) return $namespace . 'index::index';
 			
+			//\Controllers\MyDir\MyController\Index::index()
+			$try_action = 'index';
+			$try_controller = $namespace . implode('\\', $url_parts_copy) . '\index';
+			if (is_callable($try_controller . '::' . $try_action)) return $try_controller . '::' . $try_action;
+			
+			//\Controllers\MyDir\MyController::index()
 			$try_action = 'index';
 			$try_controller = $namespace . implode('\\', $url_parts_copy);
 			if (is_callable($try_controller . '::' . $try_action)) return $try_controller . '::' . $try_action;
 			
+			//\Controllers\MyDir::MyController()
 			$try_action = array_pop($url_parts_copy);
 			$try_controller = $namespace . implode('\\', $url_parts_copy);
 			if (is_callable($try_controller . '::' . $try_action)) return $try_controller . '::' . $try_action;
@@ -110,6 +94,7 @@ abstract class Router extends \Services\System\Service
 			//If the method doesn't exist, try prefixing it with "m_".  This is useful
 			//if you want to have an action named "list" but PHP won't allow you to have
 			//a method named "list".
+			//\Controllers\MyDir::m_MyController()
 			$try_action = 'm_' . $try_action;
 			if (is_callable($try_controller . '::' . $try_action)) return $try_controller . '::' . $try_action;
 		}

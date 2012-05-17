@@ -11,7 +11,7 @@
 
 namespace Services\System\Classes;
 
-abstract class Controller extends Services\System\Service
+abstract class Controller extends \Services\System\Service
 {
 
 }
