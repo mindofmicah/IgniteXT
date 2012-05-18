@@ -9,7 +9,7 @@
  * @license    MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-namespace System\Classes;
+namespace Services\System\Classes;
 
 abstract class JSON_Config
 {

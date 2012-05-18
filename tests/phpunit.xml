@@ -4,6 +4,7 @@
 			<directory suffix=".php">lib</directory>
 			<directory suffix=".php">mocks</directory>
 			<file>Patchwork.php</file>
+			<file>mock_autoloader.php</file>
 		</blacklist>
 	</filter>
 </phpunit>
