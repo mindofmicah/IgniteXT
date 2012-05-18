@@ -1,7 +1,7 @@
 <?php
 namespace Controllers;
 
-abstract class Index extends \System\Controller
+abstract class Index extends \Services\System\Controller
 {
 	public static function index()
 	{

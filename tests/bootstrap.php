@@ -8,6 +8,6 @@ define('SHRDIR', BASEDIR . 'shared/');
 define('IXTDIR', BASEDIR . 'ignitext/');
 define('APPID', 'unit_test');
 
-require BASEDIR . 'ignitext/system/autoload.php';
+require BASEDIR . 'ignitext/autoload.php';
 
 require 'mock_autoloader.php';
