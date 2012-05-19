@@ -45,7 +45,7 @@ abstract class Display extends \Services\System\Service
 		unset($view, $requested_view, $parts, $check_dirs, $dir, $location, $filename, $i);
 		
 		if (is_array($data)) extract($data, EXTR_SKIP);
-		if (!isset($tpl)) $tpl = array();
+		if (!isset($tpl)) $tpl = new \stdClass();
 		require($ixt['location']); 
 		$data['tpl'] = $tpl;
 		return true; 
@@ -75,7 +75,7 @@ abstract class Display extends \Services\System\Service
 		}
 		
 		if (is_array($data)) extract($data, EXTR_SKIP);
-		if (!isset($tpl)) $tpl = array();
+		if (!isset($tpl)) $tpl = new \stdClass();
 		require($ixt['path']); 
 		$data['tpl'] = $tpl;
 		return true; 
@@ -86,7 +86,7 @@ abstract class Display extends \Services\System\Service
 		$content = '';
 		if (!is_array($files)) $files = array($files);
 		foreach ($files as $file) $content .= static::return_view($file, $data);
-		$data['tpl']['content'] = $content;
+		$data['tpl']->content = $content;
 		static::template_view($template, $data);
 	}
 	
