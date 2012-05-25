@@ -1,4 +1,4 @@
-<phpunit>
+<phpunit bootstrap="bootstrap.php">
 	<filter>
 		<blacklist>
 			<directory suffix=".php">lib</directory>
