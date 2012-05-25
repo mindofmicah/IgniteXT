@@ -209,11 +209,11 @@ class Form_Validation extends \Entities\System\Entity
 	 * @param string $value
 	 * @return string $check_text
 	 */
-	public function form_check($key, $value, $default = false)
+	public function form_check($key, $default = false)
 	{
 		if ($this->checked == false && $default == true) return 'checked="checked"';
 		$field = $this->get_value($key);
-		if ($field == $value) return 'checked="checked"';
+		if ($field != '') return 'checked="checked"';
 		else return '';
 	}
 	

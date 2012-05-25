@@ -123,9 +123,6 @@ class Form_ValidationTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals($this->form->get_rules(), $expected_rules);
 	}
 
-	/**
-	 * @todo Implement testValidate().
-	 */
 	public function testValidate() {
 		$input_array = array(
 			'name' => 'Brian',
@@ -140,7 +137,7 @@ class Form_ValidationTest extends \PHPUnit_Framework_TestCase {
 		);
 		$this->form->set_rules($rules_array);
 		$form_valid = $this->form->validate($input_array);
-		echo $this->form->get_errors();
+		
 		$this->assertTrue( $form_valid );
 		$this->assertTrue( $this->form->checked() );
 		$this->assertTrue( $this->form->valid() );
@@ -198,26 +195,29 @@ class Form_ValidationTest extends \PHPUnit_Framework_TestCase {
 		);
 	}
 
-	/**
-	 * @todo Implement testForm_select().
-	 */
 	public function testForm_select() {
-		// Remove the following lines when you implement this test.
-		$this->markTestIncomplete(
-						'This test has not been implemented yet.'
-		);
+		$input_array = array('name' => 'Brian');
+		$rules_array = array( array('name', 'Name', 'required')	);
+		$this->form->set_rules($rules_array);
+		$form_valid = $this->form->validate($input_array);
+		
+		$this->assertEquals($this->form->form_select('name', 'Brian'), 'selected="selected"');
+		$this->assertEquals($this->form->form_select('name', 'NotSelected'), '');
+		$this->assertEquals($this->form->form_select('NotExists', 'Anything'), '');
 	}
 
-	/**
-	 * @todo Implement testForm_check().
-	 */
 	public function testForm_check() {
-		// Remove the following lines when you implement this test.
-		$this->markTestIncomplete(
-						'This test has not been implemented yet.'
+		$this->assertEquals($this->form->form_check('default_checkbox', true), 'checked="checked"');
+		
+		$input_array = array(
+			'checkbox1' => '1',
+			'checkbox2' => 'anything'
 		);
+		$form_valid = $this->form->validate($input_array);
+		
+		$this->assertEquals($this->form->form_check('checkbox1'), 'checked="checked"');
+		$this->assertEquals($this->form->form_check('checkbox2'), 'checked="checked"');
+		$this->assertEquals($this->form->form_check('checkbox3'), '');
 	}
 
 }
-
-?>
