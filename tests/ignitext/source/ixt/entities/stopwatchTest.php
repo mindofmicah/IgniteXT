@@ -25,11 +25,11 @@ class Stopwatch_Test extends \PHPUnit_Framework_TestCase {
 	public function test_elapsed_time() 
 	{
 		$this->stopwatch->mark('one');
-		usleep(100000); //tenth of a second
+		usleep(50000); //five hundreths of a second
 		$this->stopwatch->mark('two');
 		$elapsed = $this->stopwatch->elapsed_time('one','two');
-		$this->assertTrue($elapsed > 0.01);
-		$this->assertTrue($elapsed < 0.20);
+		$this->assertGreaterThan(0.01, $elapsed);
+		$this->assertLessThan(0.10, $elapsed);
 	}
 
 }

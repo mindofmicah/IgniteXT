@@ -76,12 +76,25 @@ class Router_Test extends \PHPUnit_Framework_TestCase
 	
 	public function test_custom_routes()
 	{
-		$this->markTestIncomplete();
+		\Patchwork\replace('Services\System\Router::automatic_routes', function() { return false; });
+	
+		Router::simple_route('%test/123%', '\Controllers\fake_controller::fake_action');
+		Router::route('test/123');
+		$this->assertEquals(Router::$action, '\Controllers\fake_controller::fake_action');
+		
+		Router::route('doesnotexist');
+		$this->assertEquals(Router::$action, '\Controllers\_404::index');
 	}
 	
 	public function test_simple_route()
 	{
-		$this->markTestIncomplete();
+		Router::simple_route('%test/123%', 'one::two');
+		$expected = array('regex' => '%test/123%', 'action' => 'one::two', 'after_auto' => false);
+		$this->assertEquals(Router::$custom_routes[0], $expected);
+		
+		Router::simple_route('%test/four/five/six%', 'seven\eight::nine', true);
+		$expected = array('regex' => '%test/four/five/six%', 'action' => 'seven\eight::nine', 'after_auto' => true);
+		$this->assertEquals(Router::$custom_routes[1], $expected);
 	}
 	
 	public function test_regex_route()
