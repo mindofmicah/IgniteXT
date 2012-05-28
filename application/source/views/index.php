@@ -1,5 +1,5 @@
 <?php 
-$tpl['title'] = 'Welcome to IgniteXT'; 
+$tpl->title = 'Welcome to IgniteXT'; 
 ?>
 
 <p>Thank you for downloading IgniteXT!</p>
