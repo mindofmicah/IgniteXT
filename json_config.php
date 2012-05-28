@@ -30,6 +30,23 @@ abstract class JSON_Config
 				}
 			}
 		}
+		array_walk_recursive($config, function(&$value, $key) use ($config) {
+			if (strpos($value, '{{') !== false)
+			{
+				$value = preg_replace_callback("/{{(.*)}}/", function($matches) use ($config) {
+					$arr_string = $matches[1];
+					$arr_string_arr = explode('.', $arr_string);
+					$ref = &$config;
+					foreach ($arr_string_arr as $arr_part) 
+					{
+						if (!isset($ref[$arr_part])) throw new \Exception('Config replacement does not exist: {{' . $arr_string . '}}');
+						$ref = &$ref[$arr_part];
+					}
+					return $ref;
+				}, $value);
+			}
+		});
+		
 		return $config[$mode];
 	}
 }

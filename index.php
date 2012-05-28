@@ -38,11 +38,7 @@ define('APPDIR', $application_config['APPDIR']);
 define('SHRDIR', $application_config['SHRDIR']);
 define('IXTDIR', $application_config['IXTDIR']);
 define('BASEURL', $application_config['BASEURL']);
-define('ASSETS', 
-	($application_config['ASSETS_PREPEND_BASEURL'] ? BASEURL : '') . 
-	$application_config['ASSETS']
-);
-
+define('ASSETS', $application_config['ASSETS']);
 
 /**
  * Find and require the autoloader. 
