@@ -26,7 +26,8 @@ abstract class Router extends \Services\System\Service
 	 */
 	public static function route($route)
 	{
-		$requested_url = isset($route) ? trim($route, '/') : '';		
+		$requested_url = isset($route) ? trim($route, '/') : '';
+		$requested_url = str_replace('-', '_', $requested_url);
 		
 		$action = false;
 		if ($action === false) $action = static::custom_routes($requested_url);
