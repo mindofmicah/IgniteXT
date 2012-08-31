@@ -30,6 +30,7 @@ abstract class JSON_Config
 				}
 			}
 		}
+		
 		array_walk_recursive($config, function(&$value, $key) use ($config) {
 			if (strpos($value, '{{') !== false)
 			{
