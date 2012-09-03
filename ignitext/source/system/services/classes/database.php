@@ -198,6 +198,9 @@ abstract class Database extends \Services\System\Service
 		else throw new \Exception('The rows_key function requires at least 2 parameters: $key and $query.');
 				
 		$rows = call_user_func_array('static::rows', $arguments);
+		
+		if (count($rows) == 0) return $rows;
+		
 		if (property_exists($rows[0],$key) == false) 
 			throw new \Exception('The specified key does not exist in the result set.');
 		
