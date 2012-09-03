@@ -24,9 +24,15 @@ abstract class Session extends \Services\System\Service
 		else return null;
 	}
 	
-	public static function &reference()
+	public static function &reference($name = null)
 	{
-		if (!isset($_SESSION[APPID])) $_SESSION[APPID] = array();
-		return $_SESSION[APPID];
+		if ($name === null) {
+			if (!isset($_SESSION[APPID])) $_SESSION[APPID] = array();
+			return $_SESSION[APPID];
+		}
+		else {
+			if (!isset($_SESSION[APPID][$name])) $_SESSION[APPID][$name] = null;
+			return $_SESSION[APPID][$name];
+		}
 	}
 }
