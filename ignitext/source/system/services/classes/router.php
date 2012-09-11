@@ -141,6 +141,7 @@ abstract class Router extends \Services\System\Service
 	public static function redirect($location)
 	{
 		header('Location:' . BASEURL . $location);
+		die();
 	}
 	
 }
