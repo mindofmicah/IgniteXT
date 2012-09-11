@@ -34,6 +34,7 @@ if (isset($application_config['databases']))
 	foreach ($application_config['databases'] as $id => $db_string)
 	{
 		$db_array = explode(',', $db_string);
+		$db_array = array_map('trim', $db_array);
 		switch (count($db_array))
 		{
 			case 5:	\Services\System\Database::connect($id, $db_array[0], $db_array[1], $db_array[2], $db_array[3], $db_array[4]); break;

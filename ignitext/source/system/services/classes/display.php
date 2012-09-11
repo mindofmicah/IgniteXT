@@ -83,10 +83,13 @@ abstract class Display extends \Services\System\Service
 
 	public static function template($files, &$data=null, $template = 'default')
 	{
+		$data['tpl']->template = $template;
+		
 		$content = '';
 		if (!is_array($files)) $files = array($files);
 		foreach ($files as $file) $content .= static::return_view($file, $data);
 		$data['tpl']->content = $content;
+		
 		static::template_view($template, $data);
 	}
 	
