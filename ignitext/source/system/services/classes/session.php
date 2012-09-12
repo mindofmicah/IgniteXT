@@ -35,4 +35,8 @@ abstract class Session extends \Services\System\Service
 			return $_SESSION[APPID][$name];
 		}
 	}
+	
+	public static function clear() {
+		unset($_SESSION[APPID]);
+	}
 }
