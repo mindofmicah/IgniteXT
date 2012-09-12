@@ -48,5 +48,13 @@ class Session_Test extends \PHPUnit_Framework_TestCase
 		$session['foo'] = 'bar';
 		$this->assertEquals($_SESSION[APPID]['foo'], 'bar');
 	}
+	
+	public function test_clear() 
+	{
+		$_SESSION[APPID]['test'] = 'value';
+		$this->assertNotNull($_SESSION[APPID]);
+		Session::clear();
+		$this->assertNull($_SESSION[APPID]);
+	}
 
 }
