@@ -10,7 +10,7 @@
  * @license    MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-namespace System\Services;
+namespace Services\System;
 
 function autoload_source($class)
 {
@@ -65,4 +65,4 @@ function autoload_package($class)
 	}
 }
 
-spl_autoload_register('\System\Services\autoload_source');
+spl_autoload_register('\Services\System\autoload_source');
