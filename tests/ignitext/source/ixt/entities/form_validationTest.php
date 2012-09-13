@@ -16,11 +16,11 @@ class Form_ValidationTest extends \PHPUnit_Framework_TestCase {
 	protected $form;
 
 	protected function setUp() { $this->form = new Form_Validation;	}
-	protected function tearDown() {	}
+	protected function tearDown() { }
 	
 	public function testCreate_with_rule_class()
 	{
-		$this->form = new Form_Validation(new Test_Rule_Class);
+		$this->form = new Form_Validation('\Entities\IXT\Test_Rule_Class');
 		$rules = array( array('test','test','must_be_five') );
 		$input = array('test' => 'test');
 		$this->form->set_rules($rules);
