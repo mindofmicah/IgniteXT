@@ -145,6 +145,7 @@ class Form_Validation extends \Entities\System\Entity
 			$array2 = $key_parts[1];
 			$array2 = substr($array2, 0, -1);
 			if (isset($this->array[$array1][$array2])) return $this->array[$array1][$array2];
+			else return '';
 		}
 		else if (isset($this->array[$key])) return $this->array[$key];
 		else return '';
