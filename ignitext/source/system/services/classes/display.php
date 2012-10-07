@@ -24,9 +24,11 @@ abstract class Display extends \Services\System\Service
 		$check_dirs = array(APPDIR, SHRDIR);
 		foreach ($check_dirs as $dir)
 		{
+			$dir .= 'source/';
+			if (count($parts) == 0 || !is_dir($dir . $parts[0])) $dir .= 'base/';
 			for ($i = 0; $i <= count($parts); $i++)
 			{
-				$location = $dir . 'source/';
+				$location = $dir;
 				if ($i > 0) $location .= implode(array_slice($parts, 0, $i),'/') . '/';
 				if ($i > 0 && !is_dir($location)) continue 2; //If this isn't a directory, none of the others will be either
 				$location .= 'views' . '/';

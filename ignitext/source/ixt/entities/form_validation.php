@@ -40,8 +40,8 @@ class Form_Validation extends \Entities\System\Entity
 
 	public function __construct($rule_class = null)
 	{
-		if ($rule_class == null) $this->rule_class = new \Services\IXT\Validation;
-		else $this->rule_class = new $rule_class;
+		if ($rule_class == null) $this->rule_class = '\Services\IXT\Validation';
+		else $this->rule_class = $rule_class;
 	}
 	
 	/**
@@ -97,10 +97,9 @@ class Form_Validation extends \Entities\System\Entity
 			{
 				if ($rule != 'required' && $value == '') continue;
 				list($rule, $parameters) = $this->rule_parts($rule);
-				$rule_class = $this->rule_class;
 				array_unshift($parameters,$value);
 				array_push($parameters,true);
-				$output = call_user_func_array(array($rule_class,$rule),$parameters);
+				$output = call_user_func_array(array($this->rule_class,$rule),$parameters);
 				if ($output !== true) $this->errors[$key] = 'The ' . $label . ' field ' . $output;
 			}
 		}
@@ -145,6 +144,7 @@ class Form_Validation extends \Entities\System\Entity
 			$array2 = $key_parts[1];
 			$array2 = substr($array2, 0, -1);
 			if (isset($this->array[$array1][$array2])) return $this->array[$array1][$array2];
+			else return '';
 		}
 		else if (isset($this->array[$key])) return $this->array[$key];
 		else return '';

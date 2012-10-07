@@ -16,11 +16,11 @@ class Form_ValidationTest extends \PHPUnit_Framework_TestCase {
 	protected $form;
 
 	protected function setUp() { $this->form = new Form_Validation;	}
-	protected function tearDown() {	}
+	protected function tearDown() { }
 	
 	public function testCreate_with_rule_class()
 	{
-		$this->form = new Form_Validation(new Test_Rule_Class);
+		$this->form = new Form_Validation('\Entities\IXT\Test_Rule_Class');
 		$rules = array( array('test','test','must_be_five') );
 		$input = array('test' => 'test');
 		$this->form->set_rules($rules);
@@ -78,9 +78,6 @@ class Form_ValidationTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals($this->form->get_errors(),'<span>The name field is wrong.</span><span>The number field is wrong.</span>');
 	}
 
-	/**
-	 * @todo Implement testSet_rules().
-	 */
 	public function testSet_rules() {
 		$rules = array(
 			array('name','Name','required'),
@@ -145,54 +142,52 @@ class Form_ValidationTest extends \PHPUnit_Framework_TestCase {
 		$this->assertFalse( $this->form->checked_invalid() );
 	}
 
-	/**
-	 * @todo Implement testRule_parts().
-	 */
 	public function testRule_parts() {
-		// Remove the following lines when you implement this test.
-		$this->markTestIncomplete(
-						'This test has not been implemented yet.'
-		);
+		$reflection_class = new \ReflectionClass("Entities\IXT\Form_Validation");
+		$method = $reflection_class->getMethod('rule_parts');
+		$method->setAccessible(true);
+		
+		//Just rule name, no parameters
+		$expected_return = array('test123', array());
+		$actual_return = $method->invoke($this->form, 'test123');
+		$this->assertEquals($actual_return, $expected_return);	
+		
+		//Rule name + empty parameters
+		$expected_return = array('test123', array(''));
+		$actual_return = $method->invoke($this->form, 'test123[]');
+		$this->assertEquals($actual_return, $expected_return);
+		
+		//Rule name + parameters
+		$expected_return = array('test456', array('one','two'));
+		$actual_return = $method->invoke($this->form, 'test456[one,two]');
+		$this->assertEquals($actual_return, $expected_return);		
 	}
 
-	/**
-	 * @todo Implement testGet_value().
-	 */
 	public function testGet_value() {
-		// Remove the following lines when you implement this test.
-		$this->markTestIncomplete(
-						'This test has not been implemented yet.'
+		$reflection_class = new \ReflectionClass("Entities\IXT\Form_Validation");
+		$method = $reflection_class->getMethod('get_value');
+		$method->setAccessible(true);
+		
+		$input_array = array(
+			'one' => 'two', 
+			'three' => array('four' => 'five')
 		);
+		$this->form->validate($input_array);
+		$this->assertSame($method->invoke($this->form, 'one'), 'two');
+		$this->assertSame($method->invoke($this->form, 'three[four]'), 'five');
+		$this->assertSame($method->invoke($this->form, 'three[six]'), '');
 	}
 
-	/**
-	 * @todo Implement testGet_error().
-	 */
 	public function testGet_error() {
-		// Remove the following lines when you implement this test.
-		$this->markTestIncomplete(
-						'This test has not been implemented yet.'
-		);
+		$this->markTestIncomplete();
 	}
 
-	/**
-	 * @todo Implement testGet_errors().
-	 */
 	public function testGet_errors() {
-		// Remove the following lines when you implement this test.
-		$this->markTestIncomplete(
-						'This test has not been implemented yet.'
-		);
+		$this->markTestIncomplete();
 	}
 
-	/**
-	 * @todo Implement testForm_value().
-	 */
 	public function testForm_value() {
-		// Remove the following lines when you implement this test.
-		$this->markTestIncomplete(
-						'This test has not been implemented yet.'
-		);
+		$this->markTestIncomplete();
 	}
 
 	public function testForm_select() {
