@@ -33,6 +33,7 @@ abstract class Database extends \Services\System\Service
 	public static function connect($identifier, $driver, $server, $username, $password, $database)
 	{
 		static::$PDO_connections[$identifier] = new \PDO($driver . ':host=' . $server . ';dbname=' . $database, $username, $password);
+		static::$PDO_connections[$identifier]->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 		if (count(static::$PDO_connections) == 1) 
 		{
 			static::$selected_connection = $identifier;
