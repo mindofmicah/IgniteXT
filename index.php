@@ -26,8 +26,8 @@ define('BASEDIR', dirname(__FILE__) . '/');
  * Load the application configuration file. 
  */
 require 'json_config.php';
-$mode = 'development';
-$application_config = \Services\System\Classes\JSON_Config::read('config.json', $mode);
+require 'config_select.php';
+$application_config = \Services\System\Classes\JSON_Config::read('config.json', $config_select);
 if ($application_config === false) throw new Exception('Failed to load configuration file.');
 
 /**
