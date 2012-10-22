@@ -27,17 +27,19 @@ function autoload_source($class)
 	$check_dirs = array(APPDIR, SHRDIR, IXTDIR);
 	foreach ($check_dirs as $dir)
 	{
+		$create_class = false;
+		if ($dir == IXTDIR && $parts[count($parts)-1] != 'classes') 
+		{
+			$parts[] = 'classes';
+			$create_class = true;
+		}
+		
 		$dir .= 'source/';
 		if (count($parts) == 0 || !is_dir($dir . $parts[0])) $dir .= 'base/';
+		
 		for ($i = 0; $i <= count($parts); $i++)
 		{
 			$location = $dir;
-			$create_class = false;
-			if ($dir == IXTDIR && $parts[count($parts)-1] != 'classes') 
-			{
-				$parts[] = 'classes';
-				$create_class = true;
-			}
 			if ($i > 0) $location .= implode(array_slice($parts, 0, $i),'/') . '/';
 			if ($i > 0 && !is_dir($location)) continue 2; //If this isn't a directory, none of the others will be either
 			$location .= $type . '/';
@@ -48,8 +50,9 @@ function autoload_source($class)
 				include $location; 
 				if ($create_class) {
 					array_pop($parts); //Pop off classes
-					$namespace = implode($parts, '\\');
-					eval('namespace ' . $namespace . '; class ' . $filename . ' extends ' . $namespace . '\\classes\\' . $filename);
+					$namespace = $type . '\\';
+					$namespace .= implode($parts, '\\');
+					eval('namespace ' . $namespace . '; class ' . $filename . ' extends \\' . $namespace . '\\classes\\' . $filename . '{}');
 				}
 				return; 
 			}
