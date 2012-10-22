@@ -24,64 +24,42 @@ function autoload_source($class)
 
 	$filename = array_pop($parts);
 	
-	$check_dirs = array(APPDIR, SHRDIR, IXTDIR);
+	$check_dirs = array(
+		APPDIR . 'source/', 
+		SHRDIR . 'source/', 
+		IXTDIR . 'source/'
+	);
+	
 	foreach ($check_dirs as $dir)
 	{
 		$create_class = false;
-		if ($dir == IXTDIR && $parts[count($parts)-1] != 'classes') 
+		if ($dir == IXTDIR . 'source/' && $parts[count($parts)-1] != 'classes') 
 		{
 			$parts[] = 'classes';
 			$create_class = true;
 		}
 		
-		$dir .= 'source/';
 		if (count($parts) == 0 || !is_dir($dir . $parts[0])) $dir .= 'base/';
 		
 		for ($i = 0; $i <= count($parts); $i++)
 		{
 			$location = $dir;
-			if ($i > 0) $location .= implode(array_slice($parts, 0, $i),'/') . '/';
+			if ($i > 0) $location .= implode(array_slice($parts, 0, $i), '/') . '/';
 			if ($i > 0 && !is_dir($location)) continue 2; //If this isn't a directory, none of the others will be either
 			$location .= $type . '/';
-			if ($i < count($parts)) $location .= implode(array_slice($parts, -(count($parts)-$i)), '/') . '/';
+			if ($i < count($parts)) $location .= implode(array_slice($parts, -(count($parts) - $i)), '/') . '/';
 			$location .= $filename . '.php';
 			if (file_exists($location)) 
 			{ 
 				include $location; 
 				if ($create_class) {
 					array_pop($parts); //Pop off classes
-					$namespace = $type . '\\';
-					$namespace .= implode($parts, '\\');
+					$namespace = $type . '\\' . implode($parts, '\\');
 					eval('namespace ' . $namespace . '; class ' . $filename . ' extends \\' . $namespace . '\\classes\\' . $filename . '{}');
 				}
 				return; 
 			}
 		}
-	}
-}
-
-function autoload_package($class)
-{
-	$valid_types = array('models', 'controllers', 'services', 'entities');
-
-	$class = strtolower($class);
-	$parts = explode('\\', $class);
-	
-	$type = array_shift($parts);
-	if (!in_array($type, $valid_types)) return;
-
-	$filename = array_pop($parts);
-	$package = array_shift($parts);
-
-	$path = implode('/', $parts);
-	
-	$check_dirs = array(APPDIR, SHRDIR, IXTDIR);
-	foreach ($check_dirs as $dir)
-	{
-		$location = $dir . 'packages/' . $package . '/' . $type . '/' . $path . '/' . $filename . '.php';
-		if (file_exists($location)) { include $location; return; }
-		$location = $dir . 'packages/' . $package . '/' . $path . '/' . $type . '/' . $filename . '.php';
-		if (file_exists($location)) { include $location; return; }
 	}
 }
 
